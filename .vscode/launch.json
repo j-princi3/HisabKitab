@@ -23,6 +23,15 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+        },{
+            "name": "Python: Django",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend_hisab/manage.py",
+            "args": [
+                "runserver"
+            ],
+            "django": true
         }
     ]
 }
