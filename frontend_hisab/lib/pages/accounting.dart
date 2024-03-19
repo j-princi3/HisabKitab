@@ -15,11 +15,11 @@ class AccountingPage extends StatelessWidget {
         // Dismiss the keypad when clicked on the screen
         FocusScope.of(context).unfocus();
       },
-      child: const BaseTemplate(
+      child: BaseTemplate(
         // Use BaseTemplate instead of Scaffold
         children: [
           // Add your additional components here
-          Padding(
+          const Padding(
             padding: EdgeInsets.only(
               top: 10,
               left: 20,
@@ -27,7 +27,7 @@ class AccountingPage extends StatelessWidget {
             child: Text(
               'Accounting Page',
               style: TextStyle(
-                fontSize: 25,
+                fontSize: 35,
                 fontStyle: FontStyle.italic,
                 color: Color(0xFF6FA94E),
               ),
@@ -35,14 +35,34 @@ class AccountingPage extends StatelessWidget {
           ),
           Column(
             children: [
-              Text(
+              const Text(
                 ' - File sales',
                 style: TextStyle(color: Color(0xFF6FA94E)),
               ),
-              SizedBox(height: 25),
-              NotesCount(),
-               SizedBox(height: 25),
-              ExpenseItems(),
+              const SizedBox(height: 25),
+              const NotesCount(),
+              const SizedBox(height: 25),
+              const ExpenseItems(),
+              const SizedBox(height: 25),
+              Container(
+                width: 174,
+                height: 47,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD4E7C5),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Center(
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Color(0xFF6FA94E),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
             ],
           ),
         ],

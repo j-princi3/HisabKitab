@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
               child: Text(
                 'Hisab kitab',
                 style: TextStyle(
-                  fontSize: 50,
+                  fontSize: 60,
                   fontStyle: FontStyle.italic,
                   color: Color(0xFF6FA94E),
                 ),
@@ -46,8 +46,8 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 100),
             Container(
-              width: 200,
-              height: 32,
+              width: 220,
+              height: 52,
               decoration: BoxDecoration(
                 color: const Color(0xFFBFD8AF), // Button color
                 borderRadius: BorderRadius.circular(10),

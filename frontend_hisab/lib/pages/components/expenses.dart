@@ -34,24 +34,29 @@ class _ExpenseItemsState extends State<ExpenseItems> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 10.0),
-                child: Text(
-                  'Expenses',
-                  style: TextStyle(
-                    color: Color(0xFF6FA94E),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
               InkWell(
                 onTap: () {
                   setState(() {
                     expenseBoxes.add(ExpenseBox(onDelete: () => removeExpenseBox(expenseBoxes.last)));
                   });
                 },
-                child: const Icon(Icons.add, color: Color(0xFF6FA94E)),
+                child: const Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Text(
+                        'Expenses',
+                        style: TextStyle(
+                          color: Color(0xFF6FA94E),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 30),
+                    Icon(Icons.add, color: Color(0xFF6FA94E)),
+                    ]
+                    )
               ),
             ],
           ),

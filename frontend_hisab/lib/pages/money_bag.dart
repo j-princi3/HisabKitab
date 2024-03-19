@@ -18,7 +18,7 @@ class MoneyBag extends StatelessWidget {
           child: Text(
             'Money bag ',
             style: TextStyle(
-              fontSize: 25,
+              fontSize: 35,
               fontStyle: FontStyle.italic,
               color: Color(0xFF6FA94E),
             ),

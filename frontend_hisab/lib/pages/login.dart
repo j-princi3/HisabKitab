@@ -41,7 +41,7 @@ class LoginPage extends StatelessWidget {
                     },
                     child: const Padding(
                       padding: EdgeInsets.only(top: 10, left: 20), // Add space at the top
-                      child: Icon(Icons.arrow_back_ios, color: Color(0xFF6FA94E)),
+                      child: Icon(Icons.arrow_back_ios,size: 30, color: Color(0xFF6FA94E)),
                     ),
                   ),
                   const Padding(
@@ -49,7 +49,7 @@ class LoginPage extends StatelessWidget {
                     child: Text(
                       'Hisab kitab',
                       style: TextStyle(
-                        fontSize: 25,
+                        fontSize: 35,
                         fontStyle: FontStyle.italic,
                         color: Color(0xFF6FA94E),
                       ),
