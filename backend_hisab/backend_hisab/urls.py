@@ -14,12 +14,27 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+
+    # path('Login/', ShopLogin.as_view(), name='Login'),
+    # path('admin/', admin.site.urls),
 from django.urls import path
-from hisab.views import ShopRegistration, HomeView, ShopLogin
+from hisab.views import HomeView,ShopRegistration,ShopLogin,TodayCount,TodayExpense,ExtraExpenseToday,BankBalanceView
+from django.contrib import admin
+
 urlpatterns = [
     path('', HomeView.as_view(), name='home'), 
-    path('Register/', ShopRegistration.as_view(), name='Register'),
-    path('Login/', ShopLogin.as_view(), name='Login'),
+    # Handles user registration.
+    path('register/', ShopRegistration.as_view(), name='Register'), 
+    # Handles user login.
+    path('login/', ShopLogin.as_view(), name='Login'),
+    # Counts the number of transactions for the day.
+    path('count/<str:username>', TodayCount.as_view(), name='Count'),
+    # Retrieves today's expenses for a user.
+    path('expense/<str:username>', TodayExpense.as_view(), name='Expense'),
+    # Adds extra expenses for the day and updates the bank balance.
+    path('extraexpense/<str:username>', ExtraExpenseToday.as_view(), name='ExtraExpense'),
+    # Retrieves the bank balance for a user.
+    path('getbankbalance/<str:username>', BankBalanceView.as_view(), name='BankBalanceView'),
     path('admin/', admin.site.urls),
 ]
+
