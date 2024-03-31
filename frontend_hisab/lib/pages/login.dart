@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_hisab/main.dart';
 import 'package:frontend_hisab/pages/accounting.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:frontend_hisab/services/login_api.dart';
 void main() {
   runApp(const MaterialApp(
     home: LoginPage(),
   ));
 }
 
-class LoginPage extends StatelessWidget {
+final passwordController = TextEditingController();
+final usernameController = TextEditingController();
+
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  @override
+  void initState() {
+    super.initState();
+    getValue();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +83,7 @@ class LoginPage extends StatelessWidget {
                   border: Border.all(color: const Color(0xff6fa94e)), // Add black border
                 ),
                 child: TextFormField(
+                  controller: usernameController,
                   style: const TextStyle(color: Color(0xFF6FA94E)),
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 15),
@@ -80,31 +97,63 @@ class LoginPage extends StatelessWidget {
               const PasswordField(),
               const SizedBox(height: 30),
               Container(
-                width: 278,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFBFD8AF),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: ElevatedButton(
+  width: 278,
+  height: 48,
+  decoration: BoxDecoration(
+    color: const Color(0xFFBFD8AF),
+    borderRadius: BorderRadius.circular(20),
+  ),
+  child: ElevatedButton(
+    onPressed: () async {
+      final response = await APIService.login(
+        usernameController.text.toString(),
+        passwordController.text.toString(),
+      );
+      if (response["success"] == true) {
+        // Login successful
+        await SharedPreferences.getInstance().then((prefs) {
+          prefs.setString('username', usernameController.text.toString());
+          prefs.setString('password', passwordController.text.toString());
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AccountingPage()),
+        );
+      } else {
+        // Login failed
+        // Add your logic here, such as displaying an error message
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Login Failed'),
+              content: const Text('Invalid username or password. Please try again.'),
+              actions: <Widget>[
+                TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const AccountingPage()),
-                    );
+                    Navigator.of(context).pop();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffbfd8af),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xff6fa94e)),
-                  ),
+                  child: const Text('OK'),
                 ),
-              ),
+              ],
+            );
+          },
+        );
+      }
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xffbfd8af),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+    ),
+    child: const Text(
+      'Login',
+      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xff6fa94e)),
+    ),
+  ),
+),
+
             ],
           ),
         ),
@@ -125,10 +174,13 @@ class _PasswordFieldState extends State<PasswordField> {
   bool _obscureText = true;
 
   void _togglePasswordVisibility() {
+  if (mounted) {
     setState(() {
       _obscureText = !_obscureText;
     });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -145,6 +197,7 @@ class _PasswordFieldState extends State<PasswordField> {
           border: Border.all(color: const Color(0xFF6FA94E)), // Add black border
         ),
         child: TextFormField(
+          controller: passwordController,
           style: const TextStyle(color: Color(0xFF6FA94E)),
           obscureText: _obscureText,
           decoration: InputDecoration(
@@ -164,4 +217,10 @@ class _PasswordFieldState extends State<PasswordField> {
       ),
     );
   }
+}
+
+void getValue() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  usernameController.text = prefs.getString('username') ?? '';
+  passwordController.text = prefs.getString('password') ?? '';
 }

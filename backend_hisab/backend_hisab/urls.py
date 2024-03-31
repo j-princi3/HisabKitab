@@ -14,7 +14,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+# {
+#   "notes_500":50,
+#   "notes_200":10,
+#   "notes_100":9,
+#   "time":"2024-03-25 21:41:42.000000"
+# }
     # path('Login/', ShopLogin.as_view(), name='Login'),
     # path('admin/', admin.site.urls),
 from django.urls import path
@@ -25,7 +30,7 @@ urlpatterns = [
     path('', HomeView.as_view(), name='home'), 
     # Handles user registration.
     path('register/', ShopRegistration.as_view(), name='Register'), 
-    # Handles user login.
+    # Handles user login.  http://127.0.0.1:8000/login/?username=princi&password=jain
     path('login/', ShopLogin.as_view(), name='Login'),
     # Counts the number of transactions for the day.
     path('count/<str:username>', TodayCount.as_view(), name='Count'),
