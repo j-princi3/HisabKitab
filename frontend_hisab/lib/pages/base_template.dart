@@ -16,7 +16,7 @@ class BaseTemplate extends StatelessWidget {
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
             builder: (context) => Scaffold(
-              backgroundColor: const Color(0xFFE1F0DA), // Set background color
+              backgroundColor: Theme.of(context).colorScheme.background, // Set background color
               body: Column(
                 children: [
                   Expanded(
@@ -25,8 +25,8 @@ class BaseTemplate extends StatelessWidget {
                         children: [
                           Container(
                             width: double.infinity,
-                            height: 33,
-                            color: const Color(0xFF99BC85), // Top rectangle color
+                            height: 26,
+                            color:Theme.of(context).primaryColor, // Top rectangle color
                           ),
                           const SizedBox(height: 5),
                           Row(
@@ -40,15 +40,15 @@ class BaseTemplate extends StatelessWidget {
                                     ),
                                   );
                                 },
-                                child: const Padding(
-                                  padding: EdgeInsets.only(
+                                child:  Padding(
+                                  padding: const EdgeInsets.only(
                                     top: 10,
                                     left: 20,
                                   ), // Add space at the top
                                   child: Icon(
                                     Icons.arrow_back_ios,
                                     size: 30,
-                                    color: Color(0xFF6FA94E),
+                                    color: Theme.of(context).colorScheme.onPrimary,
                                   ),
                                 ),
                               ),
@@ -62,7 +62,7 @@ class BaseTemplate extends StatelessWidget {
                   ),
                   Container(
                     height: 70,
-                    color: const Color(0xFFD4E7C5),
+                    color: Theme.of(context).colorScheme.tertiary,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -100,6 +100,7 @@ class MoneyBagIcon extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Image.asset(
           'assets/img/money-bag.png',
+          color: Theme.of(context).primaryColor,
           width: 60,
           height: 52,
         ),
@@ -126,6 +127,7 @@ class AccountingIcon extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Image.asset(
           'assets/img/accounting.png',
+          color: Theme.of(context).primaryColor,
           width: 60,
           height: 52,
         ),
@@ -154,6 +156,7 @@ class CalendarIcon extends StatelessWidget {
           'assets/img/calendar.png',
           width: 60,
           height: 52,
+          color: Theme.of(context).primaryColor,
         ),
       ),
     );

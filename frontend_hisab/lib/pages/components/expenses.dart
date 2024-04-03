@@ -28,35 +28,26 @@ class _ExpenseItemsState extends State<ExpenseItems> {
           width: 174,
           height: 47,
           decoration: BoxDecoration(
-            color: const Color(0xFFD4E7C5), // Changed the color here
+            color: Theme.of(context).colorScheme.tertiary, // Changed the color here
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+               Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Text(
+                  'Expenses',
+                  style: Theme.of(context).textTheme.bodyMedium, 
+                ),
+              ),
               InkWell(
                 onTap: () {
                   setState(() {
                     expenseBoxes.add(ExpenseBox(onDelete: () => removeExpenseBox(expenseBoxes.last)));
                   });
                 },
-                child: const Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Expenses',
-                        style: TextStyle(
-                          color: Color(0xFF6FA94E),
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 30),
-                    Icon(Icons.add, color: Color(0xFF6FA94E)),
-                    ]
-                    )
+                child: const Icon(Icons.add, color: Color(0xFF6FA94E)),
               ),
             ],
           ),

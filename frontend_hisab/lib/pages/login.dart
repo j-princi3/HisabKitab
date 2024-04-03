@@ -3,6 +3,7 @@ import 'package:frontend_hisab/main.dart';
 import 'package:frontend_hisab/pages/accounting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend_hisab/services/login_api.dart';
+
 void main() {
   runApp(const MaterialApp(
     home: LoginPage(),
@@ -35,15 +36,16 @@ class _LoginPageState extends State<LoginPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: const Color(0xffe1f0da), // Background color E1F0DA
+        backgroundColor:
+            Theme.of(context).colorScheme.background, // Background color E1F0DA
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
                 width: double.infinity,
-                height: 33,
-                color: const Color(0xFF99BC85), // Top rectangle color
+                height: 26,
+                color: Theme.of(context).primaryColor, // Top rectangle color
               ),
               const SizedBox(height: 5),
               Row(
@@ -52,23 +54,26 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const HomePage()),
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage()),
                       );
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.only(top: 10, left: 20), // Add space at the top
-                      child: Icon(Icons.arrow_back_ios,size: 30, color: Color(0xFF6FA94E)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 10, left: 20), // Add space at the top
+                      child: Icon(Icons.arrow_back_ios,
+                          size: 30,
+                          color: Theme.of(context).colorScheme.onPrimary),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10, left: 20), // Add space at the top
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10, left: 20), // Add space at the top
                     child: Text(
                       'Hisab kitab',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontStyle: FontStyle.italic,
-                        color: Color(0xFF6FA94E),
-                      ),
+                      style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                            fontSize: 40,
+                          ),
                     ),
                   ),
                 ],
@@ -78,17 +83,21 @@ class _LoginPageState extends State<LoginPage> {
                 width: 278,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xffbfd8af), //Color(0xFF6FA94E)
+                  color: Theme.of(context)
+                      .colorScheme
+                      .tertiary,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xff6fa94e)), // Add black border
+                  border: Border.all(
+                      color:
+                          Theme.of(context).primaryColor), // Add black border
                 ),
                 child: TextFormField(
                   controller: usernameController,
-                  style: const TextStyle(color: Color(0xFF6FA94E)),
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 15),
                     hintText: 'Username',
-                    hintStyle: TextStyle(color: Color(0xff6fa94e)),
+                    hintStyle: Theme.of(context).textTheme.bodyLarge,
                     border: InputBorder.none,
                   ),
                 ),
@@ -97,63 +106,78 @@ class _LoginPageState extends State<LoginPage> {
               const PasswordField(),
               const SizedBox(height: 30),
               Container(
-  width: 278,
-  height: 48,
-  decoration: BoxDecoration(
-    color: const Color(0xFFBFD8AF),
-    borderRadius: BorderRadius.circular(20),
-  ),
-  child: ElevatedButton(
-    onPressed: () async {
-      final response = await APIService.login(
-        usernameController.text.toString(),
-        passwordController.text.toString(),
-      );
-      if (response["success"] == true) {
-        // Login successful
-        await SharedPreferences.getInstance().then((prefs) {
-          prefs.setString('username', usernameController.text.toString());
-          prefs.setString('password', passwordController.text.toString());
-        });
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const AccountingPage()),
-        );
-      } else {
-        // Login failed
-        // Add your logic here, such as displaying an error message
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Login Failed'),
-              content: const Text('Invalid username or password. Please try again.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
+                width: 278,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ],
-            );
-          },
-        );
-      }
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xffbfd8af),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-    ),
-    child: const Text(
-      'Login',
-      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xff6fa94e)),
-    ),
-  ),
-),
-
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final response = await APIService.login(
+                      usernameController.text.toString(),
+                      passwordController.text.toString(),
+                    );
+                    if (response["success"] == true) {
+                      // Login successful
+                      await SharedPreferences.getInstance().then((prefs) {
+                        prefs.setString(
+                            'username', usernameController.text.toString());
+                        // prefs.setString('password', passwordController.text.toString());
+                      });
+                      Navigator.push(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AccountingPage()),
+                      );
+                    } else {
+                      // Login failed
+                      // Add your logic here, such as displaying an error message
+                      showDialog(
+                        // ignore: use_build_context_synchronously
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                                dialogBackgroundColor:
+                                    Theme.of(context).colorScheme.background),
+                            child: AlertDialog(
+                              title: const Text(
+                                'Login Failed',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content: const Text(
+                                  'Invalid username or password. Please try again.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.tertiary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(
+                    'Login',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -174,42 +198,44 @@ class _PasswordFieldState extends State<PasswordField> {
   bool _obscureText = true;
 
   void _togglePasswordVisibility() {
-  if (mounted) {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
+    if (mounted) {
+      setState(() {
+        _obscureText = !_obscureText;
+      });
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).unfocus(); // Dismiss keyboard when tapping outside of text field
+        FocusScope.of(context)
+            .unfocus(); // Dismiss keyboard when tapping outside of text field
       },
       child: Container(
         width: 278,
         height: 48,
         decoration: BoxDecoration(
-          color: const Color(0xffbfd8af),
+          color: Theme.of(context).colorScheme.tertiary,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFF6FA94E)), // Add black border
+          border: Border.all(
+              color: Theme.of(context).primaryColor), // Add black border
         ),
         child: TextFormField(
           controller: passwordController,
-          style: const TextStyle(color: Color(0xFF6FA94E)),
+          style: Theme.of(context).textTheme.bodyLarge,
           obscureText: _obscureText,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12), // Adjust vertical padding
+            contentPadding: const EdgeInsets.symmetric(
+                horizontal: 10, vertical: 12), // Adjust vertical padding
             hintText: 'Password',
-            hintStyle: const TextStyle(color: Color(0xFF6FA94E)),
+            hintStyle: Theme.of(context).textTheme.bodyLarge,
             border: InputBorder.none,
             suffixIcon: GestureDetector(
               onTap: _togglePasswordVisibility,
               child: Icon(
                 _obscureText ? Icons.visibility : Icons.visibility_off,
-                color: const Color(0xFF6FA94E),
+                color: Theme.of(context).primaryColor,
               ),
             ),
           ),
@@ -222,5 +248,5 @@ class _PasswordFieldState extends State<PasswordField> {
 void getValue() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   usernameController.text = prefs.getString('username') ?? '';
-  passwordController.text = prefs.getString('password') ?? '';
+  // passwordController.text = prefs.getString('password') ?? '';
 }

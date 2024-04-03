@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend_hisab/pages/base_template.dart'; // Import the BaseTemplate class
 import 'package:frontend_hisab/pages/components/notes_count.dart';
 import 'package:frontend_hisab/pages/components/expenses.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountingPage extends StatelessWidget {
   const AccountingPage({super.key});
@@ -19,25 +19,21 @@ class AccountingPage extends StatelessWidget {
         // Use BaseTemplate instead of Scaffold
         children: [
           // Add your additional components here
-          const Padding(
-            padding: EdgeInsets.only(
+          Padding(
+            padding: const EdgeInsets.only(
               top: 10,
               left: 20,
             ), // Add space at the top
             child: Text(
               'Accounting Page',
-              style: TextStyle(
-                fontSize: 35,
-                fontStyle: FontStyle.italic,
-                color: Color(0xFF6FA94E),
-              ),
+              style: Theme.of(context).textTheme.displayMedium,
             ),
           ),
           Column(
             children: [
-              const Text(
+               Text(
                 ' - File sales',
-                style: TextStyle(color: Color(0xFF6FA94E)),
+                style: TextStyle(color:Theme.of(context).colorScheme.onPrimary, fontSize: 15),
               ),
               const SizedBox(height: 25),
               const NotesCount(),
@@ -45,20 +41,17 @@ class AccountingPage extends StatelessWidget {
               const ExpenseItems(),
               const SizedBox(height: 25),
               Container(
-                width: 174,
+                width: 180,
                 height: 47,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD4E7C5),
+                  color: Theme.of(context).colorScheme.tertiary,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Center(
-                  child: Text(
-                    'Save',
-                    style: TextStyle(
-                      color: Color(0xFF6FA94E),
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () => getUserNamefromSharedPref(),
+                    child: Text('Save',
+                    style: Theme.of(context).textTheme.bodyMedium,),
                   ),
                 ),
               ),
@@ -70,3 +63,19 @@ class AccountingPage extends StatelessWidget {
     );
   }
 }
+
+void getUserNamefromSharedPref() {
+  // Get the username from SharedPreferences
+  SharedPreferences.getInstance().then((prefs) {
+    final username = prefs.getString('username');
+    final fivehundred = prefs.getString('fivehundred');
+    final twohundred = prefs.getString('twohundred');
+    final onehundred = prefs.getString('onehundred');
+    print('Username: $username');
+    print('500: $fivehundred');
+    print('200: $twohundred');
+    print('100: $onehundred');
+  });
+}
+
+

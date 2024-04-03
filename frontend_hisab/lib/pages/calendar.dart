@@ -6,27 +6,23 @@ class CalendarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const BaseTemplate(
+    return  BaseTemplate(
       // Use BaseTemplate instead of Scaffold
       children: [
         // Add your additional components here
         Padding(
-          padding: EdgeInsets.only(
+          padding:const EdgeInsets.only(
             top: 10,
             left: 20,
           ), // Add space at the top
           child: Text(
             'History',
-            style: TextStyle(
-              fontSize: 35,
-              fontStyle: FontStyle.italic,
-              color: Color(0xFF6FA94E),
-            ),
+            style:  Theme.of(context).textTheme.displayMedium,
           ),
         ),
         Text(
           ' - See history using calendar!',
-          style: TextStyle(color: Color(0xFF6FA94E)),
+          style: TextStyle(color:Theme.of(context).colorScheme.onPrimary, fontSize: 15),
         ),
       ],
     );
