@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from hisab.models import Register, Count, Expense, ExtraExpense, BankBalance
+from hisab.models import Register, Count, Parent_Expense, ExtraExpense, BankBalance
 
 class ShopSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,9 +12,10 @@ class CountSerializer(serializers.ModelSerializer):
         fields = ["notes_500","notes_200","notes_100","time"]  # Include all fields from the model
 
 class ExpenseSerializer(serializers.ModelSerializer):
+    list_of_expense=serializers.ListField()
     class Meta:
-        model = Expense  # Set the model to be serialized
-        fields = '__all__'  # Include all fields from the model
+        model = Parent_Expense  # Set the model to be serialized
+        fields = ["time","no_of_expense","list_of_expense"]  # Include all fields from the model
 
 class ExtraExpenseSerializer(serializers.ModelSerializer):
     class Meta:

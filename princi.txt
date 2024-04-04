@@ -1,0 +1,12 @@
+http://127.0.0.1:8000/expense/princi
+{
+   "time":"2024-03-25",
+   "no_of_expense":2,
+   "list_of_expense":[{"description":"skjh","amount":90},{"description":"skjh","amount":90}]
+}
+{
+   "notes_500":50,
+   "notes_200":10,
+   "notes_100":9,
+   "time":"2024-03-25 21:41:42.000000"
+}
