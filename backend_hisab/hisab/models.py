@@ -11,11 +11,11 @@ class Count(models.Model):
     notes_500 = models.IntegerField(default=0)
     notes_200 = models.IntegerField(default=0)
     notes_100 = models.IntegerField(default=0)
-    time=models.DateTimeField()
+    time=models.DateField()
 
 class Parent_Expense(models.Model):
     shop_name = models.CharField(max_length=100)
-    time=models.DateTimeField()
+    time=models.DateField()
     no_of_expense=models.IntegerField()
 
 class Child_Expense(models.Model):
@@ -28,7 +28,7 @@ class ExtraExpense(models.Model):
     notes_500 = models.IntegerField(default=0)
     notes_200 = models.IntegerField(default=0)
     notes_100 = models.IntegerField(default=0)
-    time=models.DateTimeField()
+    time=models.DateField()
 
 class BankBalance(models.Model):
     shop_name = models.CharField(max_length=100)
@@ -36,4 +36,4 @@ class BankBalance(models.Model):
     notes_200 = models.IntegerField()
     notes_100 = models.IntegerField()
     total = models.IntegerField()
-    time=models.DateTimeField()
+    time=models.DateField()

@@ -32,73 +32,81 @@ class ShopLogin(APIView):
         hashed_password = "maha"+password+"veera"
         try:
             member = Register.objects.get(username=username, password=hashed_password)
-            return Response({"message": "Login Successful", "username": username, "shop_name": member.shop_name}, status=status.HTTP_200_OK)
+            return Response({"message": "Login Successful"}, status=status.HTTP_200_OK)
         except Register.DoesNotExist:
             return Response({"message": "Login Failed"}, status=status.HTTP_400_BAD_REQUEST)
         
 
-# class SearchWithDate(APIView):
-#     def get(self,request):
-#         date = request.query_params.get('date')
-#         try:
-#             notesCount = Count.objects.get(time=date)
+
         
 #API for notes count of a day sales (updates bank balance)
-class TodayCount(APIView):
+class TodaysCount(APIView):
     def post(self, request, username):
         serializer = CountSerializer(data=request.data)
         if serializer.is_valid():
             try:
-                print(username)
                 member = Register.objects.get(username=username)
-                print(member.username)
                 notes_500 = serializer.validated_data.get('notes_500')
                 notes_200 = serializer.validated_data.get('notes_200')
                 notes_100 = serializer.validated_data.get('notes_100')
                 time = serializer.validated_data.get('time')
                 mem_count = Count(shop_name=member.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100,time=time)
                 mem_count.save()
-
                 last_balance = BankBalance.objects.latest('id')
                 notes1_500 = last_balance.notes_500 + notes_500
                 notes1_200 = last_balance.notes_200 + notes_200
                 notes1_100 = last_balance.notes_100 + notes_100
                 mem_bank = BankBalance(shop_name=member.shop_name, notes_500=notes1_500, notes_200=notes1_200, notes_100=notes1_100,total=notes1_500*500+notes1_200*200+notes1_100*100,time=time)
                 mem_bank.save()
-                return Response({"message": "Count Added Successfully", "shop_name": member.shop_name,"BankBalnce":{"notes_500":notes_500, "notes_200":notes_200, "notes_100":notes_100,"total":notes_500*500+notes_200*200+notes_100*100}}, status=status.HTTP_201_CREATED)
+                # return Response({"message": "Count Added Successfully", "shop_name": member.shop_name,"BankBalnce":{"notes_500":notes_500, "notes_200":notes_200, "notes_100":notes_100,"total":notes_500*500+notes_200*200+notes_100*100}}, status=status.HTTP_201_CREATED)
+                return Response({"message": "Count has been added successfully and also updated bank balance of the day", "shop_name": member.shop_name},status=status.HTTP_201_CREATED)
             except ObjectDoesNotExist:
                 return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 #API for a day expense for accounting purpose
-class Expense(APIView):
+class TodaysExpense(APIView):
     def post(self,request,username):
         serializer = ExpenseSerializer(data=request.data)
         if serializer.is_valid():
             try:
                 member = Register.objects.get(username=username)
-                time = serializer.validated_data.get('time')
+                date = serializer.validated_data.get('time')
                 no_of_expense = serializer.validated_data.get('no_of_expense')
                 list_of_expense = serializer.validated_data.get('list_of_expense')
                 print(list_of_expense)
-                parent = Parent_Expense(shop_name=member.shop_name,time=time,no_of_expense=no_of_expense)
+                parent = Parent_Expense(shop_name=member.shop_name,time=date,no_of_expense=no_of_expense)
                 parent.save()
                 parent_id = parent.id
                 if no_of_expense == len(list_of_expense):
                     for i in range(no_of_expense):
                         child = Child_Expense(parent_id=parent_id,description=list_of_expense[i]['description'],amount=list_of_expense[i]['amount'])
                         child.save()
-                    return Response({"message": "Expense Added Successfully", "shop_name": member.shop_name, "no_of_expense": no_of_expense, "list_of_expense": list_of_expense}, status=status.HTTP_201_CREATED)
+                    return Response({"message": f"Expense Added Successfully to {member.shop_name} on {date}"}, status=status.HTTP_201_CREATED)
                 else:
-                    return Response({"message": "No of expenses and list of expenses not matching"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"message": "Expense list did not get added"}, status=status.HTTP_400_BAD_REQUEST)
             except ObjectDoesNotExist:
                 return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
             
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        
+class BankBalanceView(APIView):
+    def get(self, request, username):
+        try:
+            member = Register.objects.get(username=username)
+            balance = BankBalance.objects.latest('id')
+            return Response({"message": "Bank Balance", "shop_name": member.shop_name, "BankBalnce":[balance.notes_500, balance.notes_200, balance.notes_100,balance.total,balance.time]}, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
 #API for extra expenses for Bank bag page (updates bank balance)
-class ExtraExpenseToday(APIView):
+class TodaysExtraExpense(APIView):
     def post(self, request, username):
         serializer = ExtraExpenseSerializer(data=request.data)
         if serializer.is_valid():
@@ -107,29 +115,41 @@ class ExtraExpenseToday(APIView):
                 notes_500 = serializer.validated_data.get('notes_500')
                 notes_200 = serializer.validated_data.get('notes_200')
                 notes_100 = serializer.validated_data.get('notes_100')
-                time = serializer.validated_data.get('time')
-                member = ExtraExpense(shop_name=mem.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100)
+                date = serializer.validated_data.get('time')
+                member = ExtraExpense(shop_name=mem.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100,time=date)
                 member.save()
                 last_balance = BankBalance.objects.latest('id')
                 notes1_500 = last_balance.notes_500 - notes_500
                 notes1_200 = last_balance.notes_200 - notes_200
                 notes1_100 = last_balance.notes_100 - notes_100
-                mem_bank = BankBalance(shop_name=mem.shop_name, notes_500=notes1_500, notes_200=notes1_200, notes_100=notes1_100,total=notes1_500*500+notes1_200*200+notes1_100*100,time=time)
+                mem_bank = BankBalance(shop_name=mem.shop_name, notes_500=notes1_500, notes_200=notes1_200, notes_100=notes1_100,total=notes1_500*500+notes1_200*200+notes1_100*100,time=date)
                 mem_bank.save()
-                return Response({"message": "Extra Expense Added Successfully", "shop_name": member.shop_name, "shop_name": member.shop_name,"BankBalnce":{"notes_500":notes1_500, "notes_200":notes1_200, "notes_100":notes1_100,"total":notes1_500*500+notes1_200*200+notes1_100*100},"Expense":{"notes_500":notes_500, "notes_200":notes_200, "notes_10":notes_100,"total":notes_500*500+notes_200*200+notes_100*100}}, status=status.HTTP_201_CREATED)
+                return Response({"message": "Extra Expense Added Successfully {member.shop_name} on {date}"}, status=status.HTTP_201_CREATED)
             except ObjectDoesNotExist:
                 return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class BankBalanceView(APIView):
-    def get(self, request, username):
+
+
+class SearchWithDate(APIView):
+    def get(self,request):
+        date = request.query_params.get('date')
         try:
-            member = Register.objects.get(username=username)
-            balance = BankBalance.objects.latest('id')
-            return Response({"message": "Bank Balance", "shop_name": member.shop_name, "BankBalnce":{"notes_500":balance.notes_500, "notes_200":balance.notes_200, "notes_100":balance.notes_100,"total":balance.total,"time":balance.time}}, status=status.HTTP_200_OK)
+            notesCount = Count.objects.get(time=date)
+            balanceOnThatDay = BankBalance.objects.get(time=date)
         except ObjectDoesNotExist:
-            return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": f"Hisab was not found on this date {date}"}, status=status.HTTP_404_NOT_FOUND)
+        parent = Parent_Expense.objects.get(time=date)
+        child = Child_Expense.objects.filter(parent_id=parent.id)
+        expenseList=[]
+        for i in child:
+            expenseList.append({"description":i.description,"amount":i.amount})
+            extraExpense = ExtraExpense.objects.filter(time=date)
+            extraExpenseList=[]
+        for i in extraExpense:
+            extraExpenseList.append({"notes_500":i.notes_500,"notes_200":i.notes_200,"notes_100":i.notes_100})
+        return Response({"message": f"Hisab found on this date {date}","NotesCount":[notesCount.notes_500,notesCount.notes_200,notesCount.notes_100],"BankBalance":[balanceOnThatDay.notes_500,balanceOnThatDay.notes_200,balanceOnThatDay.notes_100,balanceOnThatDay.total],"Expense":{"no_of_expense":parent.no_of_expense,"list_of_expense":expenseList},"ExtraExpense":extraExpenseList}, status=status.HTTP_200_OK)
 
 class HomeView(View):
     def get(self, request):

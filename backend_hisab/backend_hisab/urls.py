@@ -15,28 +15,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-    # path('Login/', ShopLogin.as_view(), name='Login'),
-    # path('admin/', admin.site.urls),
 from django.urls import path
-from hisab.views import HomeView,ShopRegistration,ShopLogin,TodayCount,Expense,ExtraExpenseToday,BankBalanceView#SearchWithDate
+from hisab.views import HomeView,ShopRegistration,ShopLogin,TodaysCount,TodaysExpense,TodaysExtraExpense,BankBalanceView,SearchWithDate
 from django.contrib import admin
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'), 
     # Handles user registration.
     path('register/', ShopRegistration.as_view(), name='Register'), 
-    # Handles user login.  http://127.0.0.1:8000/login/?username=princi&password=jain
+    # Handles user login.  
     path('login/', ShopLogin.as_view(), name='Login'),
     # Counts the number of transactions for the day.
-    path('count/<str:username>', TodayCount.as_view(), name='Count'),
+    path('count/<str:username>', TodaysCount.as_view(), name='Count'),
     # Retrieves today's expenses for a user.
-    path('expense/<str:username>', Expense.as_view(), name='Expense'),
+    path('expense/<str:username>', TodaysExpense.as_view(), name='Expense'),
     # Adds extra expenses for the day and updates the bank balance.
-    path('extraexpense/<str:username>', ExtraExpenseToday.as_view(), name='ExtraExpense'),
+    path('extraexpense/<str:username>', TodaysExtraExpense.as_view(), name='ExtraExpense'),
     # Retrieves the bank balance for a user.
     path('getbankbalance/<str:username>', BankBalanceView.as_view(), name='BankBalanceView'),
+    # Retrieves the transactions for a specific date.
+    path('date/', SearchWithDate.as_view(),name='Date'),
 
-    # path('date/', SearchWithDate.as_view(),name='Date'),
+
     path('admin/', admin.site.urls),
 ]
 
