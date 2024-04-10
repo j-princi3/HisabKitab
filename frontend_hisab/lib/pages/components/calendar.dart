@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 /// Flutter code sample for [showDatePicker].
 DateTime now = DateTime.now();
   int year = DateTime.now().year;
@@ -85,6 +85,7 @@ var time=DateTime(year, month, day);
           content: Text(
               'Selected: ${_selectedDate.value.day}/${_selectedDate.value.month}/${_selectedDate.value.year}'),
         ));
+        saveDateTime(_selectedDate.value);
       });
     }
   }
@@ -110,3 +111,7 @@ Widget build(BuildContext context) {
 
 }
 }
+Future<void> saveDateTime(DateTime dateTime) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('dateTime', dateTime.toString());
+  }

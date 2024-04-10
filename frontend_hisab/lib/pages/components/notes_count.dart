@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+DateTime dateTime = DateTime.now();
 class NotesCount extends StatefulWidget {
   const NotesCount({super.key});
 
@@ -13,6 +13,7 @@ class _NotesCountState extends State<NotesCount> {
   TextEditingController fivehundred = TextEditingController();
   TextEditingController twohundred = TextEditingController();
   TextEditingController onehundred = TextEditingController();
+  int totalAmount = 0;
 
   @override
   void initState() {
@@ -48,6 +49,10 @@ class _NotesCountState extends State<NotesCount> {
           const SizedBox(height: 15),
           Column(
             children: [
+               Text(
+                '$totalAmount',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
               buildTextField(fivehundred, "500"),
               const SizedBox(height: 5),
               buildTextField(twohundred, "200"),
@@ -84,6 +89,9 @@ class _NotesCountState extends State<NotesCount> {
           contentPadding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
         ),
         onChanged: (value) {
+          setState(() {
+            totalAmount = calculateTotalAmount();
+          });
           // Save changed values to SharedPreferences when they are modified
           saveChangedValues();
         },
@@ -91,11 +99,19 @@ class _NotesCountState extends State<NotesCount> {
     );
   }
 
+  int calculateTotalAmount() {
+    int fiveHundredValue = int.tryParse(fivehundred.text) ?? 0;
+    int twoHundredValue = int.tryParse(twohundred.text) ?? 0;
+    int oneHundredValue = int.tryParse(onehundred.text) ?? 0;
+    return (fiveHundredValue * 500) + (twoHundredValue * 200) + (oneHundredValue * 100);
+  }
+
   Future<void> saveChangedValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('fivehundred', fivehundred.text);
     prefs.setString('twohundred', twohundred.text);
     prefs.setString('onehundred', onehundred.text);
+    saveDateTime(dateTime);
   }
 
   Future<void> retrieveSavedValues() async {
@@ -104,6 +120,13 @@ class _NotesCountState extends State<NotesCount> {
       fivehundred.text = prefs.getString('fivehundred') ?? '';
       twohundred.text = prefs.getString('twohundred') ?? '';
       onehundred.text = prefs.getString('onehundred') ?? '';
+      totalAmount = calculateTotalAmount();
     });
   }
 }
+
+
+Future<void> saveDateTime(DateTime dateTime) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('dateTime', dateTime.toString());
+  }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend_hisab/pages/money_bag.dart';
+import 'package:frontend_hisab/services/hisab_api.dart';
 var expenselist = [];
-
 class ExpenseItem {
   final String description;
   final int amount;
@@ -47,6 +47,7 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                 onTap: () {
                   setState(() {
                     _expenseItems.add(ExpenseItem('', 0));
+
                   });
                 },
                 child: Icon(Icons.add,
@@ -54,6 +55,9 @@ class _ExpenseItemsState extends State<ExpenseItems> {
               ),
             ],
           ),
+        ),
+        Text(
+          '${_expenseItems.fold(0, (prev, item) => prev + (item.description.isEmpty ? 0 : item.amount))}',
         ),
         const SizedBox(height: 10),
         Column(
@@ -90,12 +94,54 @@ class _ExpenseItemsState extends State<ExpenseItems> {
           ),
           child: Center(
             child: TextButton(
-              onPressed: () => {
-                getUserNamefromSharedPref(_expenseItems),
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MoneyBag()),
-                )
+              onPressed: () async {
+                getUserNamefromSharedPref(_expenseItems);
+                final prefs = await SharedPreferences.getInstance();
+                final response = await APIService.hisab(prefs.getString('username') ?? '');
+                if (response['success'] == true) {
+                  expenselist.clear();
+                  prefs.setString('fivehundred', '');
+                  prefs.setString('twohundred', '');
+                  prefs.setString('onehundred', '');
+                  prefs.setString('dateTime', DateTime.now().toString());
+                  Navigator.push(
+                    // ignore: use_build_context_synchronously
+                    context,
+                    MaterialPageRoute(builder: (context) => const MoneyBag()),
+                  );
+                }
+                else{// Login failed
+                      // Add your logic here, such as displaying an error message
+                      showDialog(
+                        // ignore: use_build_context_synchronously
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                                dialogBackgroundColor:
+                                    Theme.of(context).colorScheme.background),
+                            child: AlertDialog(
+                              title: const Text(
+                                'Failed',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content: const Text(
+                                  'You have already submitted the notes count and expenses for today. Please try again for valid date.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                }
               },
               child: Text(
                 ' Save ',
@@ -200,27 +246,13 @@ class ExpenseBox extends StatelessWidget {
 
 void getUserNamefromSharedPref(List<ExpenseItem> expenseItems) {
   SharedPreferences.getInstance().then((prefs) {
-    final username = prefs.getString('username');
-    int fiveHundredInt = int.tryParse(prefs.getString('fivehundred')!) ?? 0;
-    int twoHundredInt = int.tryParse(prefs.getString('twohundred')!) ?? 0;
-    int oneHundredInt = int.tryParse(prefs.getString('onehundred')!) ?? 0;
-
-    print('Username: $username');
-    print('500: $fiveHundredInt');
-    print('200: $twoHundredInt');
-    print('100: $oneHundredInt');
-
-    // Print or process expense items
-
-    print('Expense Items:');
     for (var item in expenseItems) {
+      if (item.amount == 0 || item.description.isEmpty) {
+        continue;
+      }
       expenselist.add({'description': item.description, 'amount': item.amount});
-      print(expenselist);
     }
     expenseItems.clear();
-    expenselist.clear();
-    prefs.setString('fivehundred', '');
-    prefs.setString('twohundred', '');
-    prefs.setString('onehundred', '');
+    
   });
 }

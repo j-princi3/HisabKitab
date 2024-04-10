@@ -75,7 +75,8 @@ class TodaysExpense(APIView):
                 date = serializer.validated_data.get('time')
                 no_of_expense = serializer.validated_data.get('no_of_expense')
                 list_of_expense = serializer.validated_data.get('list_of_expense')
-                print(list_of_expense)
+                if no_of_expense == 0:
+                    return Response({"message": "No expenses to add"}, status=status.HTTP_201_CREATED)
                 parent = Parent_Expense(shop_name=member.shop_name,time=date,no_of_expense=no_of_expense)
                 parent.save()
                 parent_id = parent.id

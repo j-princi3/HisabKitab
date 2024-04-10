@@ -8,9 +8,9 @@ class Register(models.Model):
 
 class Count(models.Model):
     shop_name = models.CharField(max_length=100)
-    notes_500 = models.IntegerField(default=0)
-    notes_200 = models.IntegerField(default=0)
-    notes_100 = models.IntegerField(default=0)
+    notes_500 = models.IntegerField()
+    notes_200 = models.IntegerField()
+    notes_100 = models.IntegerField()
     time=models.DateField()
 
 class Parent_Expense(models.Model):
@@ -25,9 +25,9 @@ class Child_Expense(models.Model):
 
 class ExtraExpense(models.Model):
     shop_name = models.CharField(max_length=100)
-    notes_500 = models.IntegerField(default=0)
-    notes_200 = models.IntegerField(default=0)
-    notes_100 = models.IntegerField(default=0)
+    notes_500 = models.IntegerField()
+    notes_200 = models.IntegerField()
+    notes_100 = models.IntegerField()
     time=models.DateField()
 
 class BankBalance(models.Model):
