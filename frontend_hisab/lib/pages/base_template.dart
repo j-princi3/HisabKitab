@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_hisab/pages/login.dart';
 import 'package:frontend_hisab/pages/money_bag.dart';
 import 'package:frontend_hisab/pages/accounting.dart';
-import 'package:frontend_hisab/pages/calendar.dart';
+import 'package:frontend_hisab/pages/history_view.dart';
 
 class BaseTemplate extends StatelessWidget {
   final List<Widget> children;

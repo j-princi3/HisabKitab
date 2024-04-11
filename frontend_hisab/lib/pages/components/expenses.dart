@@ -103,6 +103,7 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                   prefs.setString('fivehundred', '');
                   prefs.setString('twohundred', '');
                   prefs.setString('onehundred', '');
+                  prefs.setString('totalsales', '');
                   prefs.setString('dateTime', DateTime.now().toString());
                   Navigator.push(
                     // ignore: use_build_context_synchronously
@@ -111,6 +112,7 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                   );
                 }
                 else{// Login failed
+                final msg = response['error'];
                       // Add your logic here, such as displaying an error message
                       showDialog(
                         // ignore: use_build_context_synchronously
@@ -125,8 +127,8 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                                 'Failed',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              content: const Text(
-                                  'You have already submitted the notes count and expenses for today. Please try again for valid date.'),
+                              content:  Text(
+                                  '$msg.'),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () {

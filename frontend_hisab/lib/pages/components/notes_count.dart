@@ -10,6 +10,7 @@ class NotesCount extends StatefulWidget {
 }
 
 class _NotesCountState extends State<NotesCount> {
+  TextEditingController salestoday = TextEditingController();
   TextEditingController fivehundred = TextEditingController();
   TextEditingController twohundred = TextEditingController();
   TextEditingController onehundred = TextEditingController();
@@ -32,6 +33,36 @@ class _NotesCountState extends State<NotesCount> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Container(
+      width: 300,
+      height: 40,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: TextField(
+        controller: salestoday,
+        keyboardType: TextInputType.number,
+        maxLength: 15,
+        style: Theme.of(context).textTheme.bodyLarge,
+        textAlign: TextAlign.right,
+        textAlignVertical: TextAlignVertical.center,
+        decoration: InputDecoration(
+          hintText: "Enter today's sales amount",
+          hintStyle: Theme.of(context).textTheme.bodyLarge,
+          counterText: "",
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+        ),
+        onChanged: (value) {
+          setState(() {
+            totalAmount = calculateTotalAmount();
+          });
+          // Save changed values to SharedPreferences when they are modified
+          saveChangedValues();
+        },
+      ),
+    ),
           Container(
             width: 174,
             height: 47,
@@ -111,6 +142,7 @@ class _NotesCountState extends State<NotesCount> {
     prefs.setString('fivehundred', fivehundred.text);
     prefs.setString('twohundred', twohundred.text);
     prefs.setString('onehundred', onehundred.text);
+    prefs.setString('totalsales', salestoday.text);
     saveDateTime(dateTime);
   }
 
@@ -120,6 +152,7 @@ class _NotesCountState extends State<NotesCount> {
       fivehundred.text = prefs.getString('fivehundred') ?? '';
       twohundred.text = prefs.getString('twohundred') ?? '';
       onehundred.text = prefs.getString('onehundred') ?? '';
+      salestoday.text = prefs.getString('totalsales') ?? '';
       totalAmount = calculateTotalAmount();
     });
   }

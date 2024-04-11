@@ -49,8 +49,11 @@ class TodaysCount(APIView):
                 notes_500 = serializer.validated_data.get('notes_500')
                 notes_200 = serializer.validated_data.get('notes_200')
                 notes_100 = serializer.validated_data.get('notes_100')
+                total_sales = serializer.validated_data.get('total_sales')
                 time = serializer.validated_data.get('time')
-                mem_count = Count(shop_name=member.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100,time=time)
+                if Count.objects.filter(time=time).exists():
+                    return Response({"message": "Count for this day already exists"}, status=status.HTTP_404_NOT_FOUND)
+                mem_count = Count(shop_name=member.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100,total_sales=total_sales,time=time)
                 mem_count.save()
                 last_balance = BankBalance.objects.latest('id')
                 notes1_500 = last_balance.notes_500 + notes_500
@@ -150,7 +153,7 @@ class SearchWithDate(APIView):
             extraExpenseList=[]
         for i in extraExpense:
             extraExpenseList.append({"notes_500":i.notes_500,"notes_200":i.notes_200,"notes_100":i.notes_100})
-        return Response({"message": f"Hisab found on this date {date}","NotesCount":[notesCount.notes_500,notesCount.notes_200,notesCount.notes_100],"BankBalance":[balanceOnThatDay.notes_500,balanceOnThatDay.notes_200,balanceOnThatDay.notes_100,balanceOnThatDay.total],"Expense":{"no_of_expense":parent.no_of_expense,"list_of_expense":expenseList},"ExtraExpense":extraExpenseList}, status=status.HTTP_200_OK)
+        return Response({"message": f"Hisab found on this date {date}","NotesCount":[notesCount.notes_500,notesCount.notes_200,notesCount.notes_100,notesCount.total_sales],"BankBalance":[balanceOnThatDay.notes_500,balanceOnThatDay.notes_200,balanceOnThatDay.notes_100,balanceOnThatDay.total],"Expense":{"no_of_expense":parent.no_of_expense,"list_of_expense":expenseList},"ExtraExpense":extraExpenseList}, status=status.HTTP_200_OK)
 
 class HomeView(View):
     def get(self, request):

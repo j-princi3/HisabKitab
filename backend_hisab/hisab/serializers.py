@@ -9,7 +9,7 @@ class ShopSerializer(serializers.ModelSerializer):
 class CountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Count  # Set the model to be serialized
-        fields = ["notes_500","notes_200","notes_100","time"]  # Include all fields from the model
+        fields = ["notes_500","notes_200","notes_100","time","total_sales"]  # Include all fields from the model
 
 class ExpenseSerializer(serializers.ModelSerializer):
     list_of_expense=serializers.ListField()

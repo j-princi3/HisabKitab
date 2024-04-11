@@ -11,6 +11,7 @@ class Count(models.Model):
     notes_500 = models.IntegerField()
     notes_200 = models.IntegerField()
     notes_100 = models.IntegerField()
+    total_sales = models.IntegerField()
     time=models.DateField()
 
 class Parent_Expense(models.Model):
