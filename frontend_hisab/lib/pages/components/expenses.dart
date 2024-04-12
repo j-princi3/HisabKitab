@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:frontend_hisab/pages/money_bag.dart';
 import 'package:frontend_hisab/services/hisab_api.dart';
 var expenselist = [];
 class ExpenseItem {
@@ -105,11 +104,35 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                   prefs.setString('onehundred', '');
                   prefs.setString('totalsales', '');
                   prefs.setString('dateTime', DateTime.now().toString());
-                  Navigator.push(
-                    // ignore: use_build_context_synchronously
-                    context,
-                    MaterialPageRoute(builder: (context) => const MoneyBag()),
-                  );
+                  showDialog(
+                        // ignore: use_build_context_synchronously
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                                dialogBackgroundColor:
+                                    Theme.of(context).colorScheme.background),
+                            child: AlertDialog(
+                              title: const Text(
+                                'Success',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content: const Text(
+                                  'Your accounting is saved ,check out pages for details.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
                 }
                 else{// Login failed
                 final msg = response['error'];

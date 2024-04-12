@@ -3,7 +3,8 @@ import 'package:frontend_hisab/pages/login.dart';
 import 'package:frontend_hisab/pages/money_bag.dart';
 import 'package:frontend_hisab/pages/accounting.dart';
 import 'package:frontend_hisab/pages/history_view.dart';
-
+import 'package:frontend_hisab/services/balance_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class BaseTemplate extends StatelessWidget {
   final List<Widget> children;
 
@@ -56,6 +57,7 @@ class BaseTemplate extends StatelessWidget {
                             ],
                           ),
                           children[1],
+
                         ],
                       ),
                     ),
@@ -88,19 +90,24 @@ class MoneyBagIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const MoneyBag(),
-          ),
-        );
+      onTap: () async{
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        final response=APIService.balance(prefs.getString('username') ?? '');
+        var responseData = await response;
+        if(responseData['success']){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>  MoneyBag(data: responseData['data'],),
+            )
+          );
+      }
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Image.asset(
           'assets/img/money-bag.png',
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.onPrimary,
           width: 60,
           height: 52,
         ),
@@ -127,7 +134,7 @@ class AccountingIcon extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Image.asset(
           'assets/img/accounting.png',
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.onPrimary,
           width: 60,
           height: 52,
         ),
@@ -156,7 +163,7 @@ class CalendarIcon extends StatelessWidget {
           'assets/img/calendar.png',
           width: 60,
           height: 52,
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
       ),
     );

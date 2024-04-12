@@ -235,7 +235,7 @@ class _PasswordFieldState extends State<PasswordField> {
               onTap: _togglePasswordVisibility,
               child: Icon(
                 _obscureText ? Icons.visibility : Icons.visibility_off,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
             ),
           ),
