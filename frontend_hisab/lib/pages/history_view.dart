@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_hisab/pages/base_template.dart'; // Import the BaseTemplate class
-
+import 'package:frontend_hisab/pages/components/viewhistory.dart'; // Import the TableBasicsExample class
 class CalendarPage extends StatelessWidget {
   const CalendarPage({super.key});
 
@@ -20,12 +20,19 @@ class CalendarPage extends StatelessWidget {
             style:  Theme.of(context).textTheme.displayMedium,
           ),
         ),
-        Text(
+        Column(
+        children: [
+          Center(
+            child: Text(
           ' - See history using calendar!',
           style: TextStyle(color:Theme.of(context).colorScheme.onPrimary, fontSize: 15),
         ),
+          ),
+        
+        const TableBasicsExample(),
       ],
-    );
+    ),
+  ],
+  );
   }
 }
-

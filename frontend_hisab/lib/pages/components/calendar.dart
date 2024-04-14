@@ -34,6 +34,23 @@ class _DatePickerExampleState extends State<DatePickerExample>
     with RestorationMixin {
   // In this example, the restoration ID for the mixin is passed in through
   // the [StatefulWidget]'s constructor.
+  DateTime time=DateTime(year, month, day);
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeTime();
+  }
+
+  _initializeTime() {
+    getDateTime().then((dateTime) {
+      setState(() {
+        if (dateTime != '') {
+          time = DateTime.parse(dateTime);
+        } 
+      });
+    });
+  }
   @override
   String? get restorationId => widget.restorationId;
   final RestorableDateTime _selectedDate =
@@ -75,7 +92,6 @@ class _DatePickerExampleState extends State<DatePickerExample>
     registerForRestoration(
         _restorableDatePickerRouteFuture, 'date_picker_route_future');
   }
-var time=DateTime(year, month, day);
   void _selectDate(DateTime? newSelectedDate) {
     if (newSelectedDate != null) {
       setState(() {
@@ -104,6 +120,7 @@ Widget build(BuildContext context) {
     // Add more style properties as needed
   ),
   child: Text(
+    // if (prefs.getString('dateTime') ?? ''==)
     '${time.day}/${time.month}/${time.year}',
     style: Theme.of(context).textTheme.bodyLarge,
   ),
@@ -114,4 +131,10 @@ Widget build(BuildContext context) {
 Future<void> saveDateTime(DateTime dateTime) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('dateTime', dateTime.toString());
+  }
+
+Future<String> getDateTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final storedDateTime = prefs.getString('dateTime') ?? '';
+    return storedDateTime;
   }

@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-class NotesCount extends StatefulWidget {
-  const NotesCount({super.key});
+class NotesCountexpense extends StatefulWidget {
+  const NotesCountexpense({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _NotesCountState createState() => _NotesCountState();
+  _NotesCountexpenseState createState() => _NotesCountexpenseState();
 }
 
-class _NotesCountState extends State<NotesCount> {
-  TextEditingController salestoday = TextEditingController();
-  TextEditingController fivehundred = TextEditingController();
-  TextEditingController twohundred = TextEditingController();
-  TextEditingController onehundred = TextEditingController();
+class _NotesCountexpenseState extends State<NotesCountexpense> {
+  TextEditingController fivehundredexpense = TextEditingController();
+  TextEditingController twohundredexpense = TextEditingController();
+  TextEditingController onehundredexpense = TextEditingController();
   int totalAmount = 0;
 
   @override
@@ -33,37 +32,6 @@ class _NotesCountState extends State<NotesCount> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-      width: 300,
-      height: 40,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Theme.of(context).colorScheme.tertiary,
-      ),
-      child: TextField(
-        controller: salestoday,
-        keyboardType: TextInputType.number,
-        maxLength: 15,
-        style: Theme.of(context).textTheme.bodyLarge,
-        textAlign: TextAlign.right,
-        textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-          hintText: "Expected Sales",
-          hintStyle: Theme.of(context).textTheme.bodyLarge,
-          counterText: "",
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
-        ),
-        onChanged: (value) {
-          setState(() {
-            totalAmount = calculateTotalAmount();
-          });
-          // Save changed values to SharedPreferences when they are modified
-          saveChangedValues();
-        },
-      ),
-    ),
-          Container(
             width: 174,
             height: 47,
             decoration: BoxDecoration(
@@ -72,7 +40,7 @@ class _NotesCountState extends State<NotesCount> {
             ),
             child:  Center(
               child: Text(
-                'Notes',
+                'Extra Expense',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
@@ -84,11 +52,11 @@ class _NotesCountState extends State<NotesCount> {
                 '$totalAmount',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              buildTextField(fivehundred, "500"),
+              buildTextField(fivehundredexpense, "500"),
               const SizedBox(height: 5),
-              buildTextField(twohundred, "200"),
+              buildTextField(twohundredexpense, "200"),
               const SizedBox(height: 5),
-              buildTextField(onehundred, "100"),
+              buildTextField(onehundredexpense, "100"),
             ],
           ),
         ],
@@ -131,27 +99,25 @@ class _NotesCountState extends State<NotesCount> {
   }
 
   int calculateTotalAmount() {
-    int fiveHundredValue = int.tryParse(fivehundred.text) ?? 0;
-    int twoHundredValue = int.tryParse(twohundred.text) ?? 0;
-    int oneHundredValue = int.tryParse(onehundred.text) ?? 0;
-    return (fiveHundredValue * 500) + (twoHundredValue * 200) + (oneHundredValue * 100);
+    int fiveHundredexpenseValue = int.tryParse(fivehundredexpense.text) ?? 0;
+    int twoHundredexpenseValue = int.tryParse(twohundredexpense.text) ?? 0;
+    int oneHundredexpenseValue = int.tryParse(onehundredexpense.text) ?? 0;
+    return (fiveHundredexpenseValue * 500) + (twoHundredexpenseValue * 200) + (oneHundredexpenseValue * 100);
   }
 
   Future<void> saveChangedValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('fivehundred', fivehundred.text);
-    prefs.setString('twohundred', twohundred.text);
-    prefs.setString('onehundred', onehundred.text);
-    prefs.setString('totalsales', salestoday.text);
+    prefs.setString('fivehundredexpense', fivehundredexpense.text);
+    prefs.setString('twohundredexpense', twohundredexpense.text);
+    prefs.setString('onehundredexpense', onehundredexpense.text);
   }
 
   Future<void> retrieveSavedValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      fivehundred.text = prefs.getString('fivehundred') ?? '';
-      twohundred.text = prefs.getString('twohundred') ?? '';
-      onehundred.text = prefs.getString('onehundred') ?? '';
-      salestoday.text = prefs.getString('totalsales') ?? '';
+      fivehundredexpense.text = prefs.getString('fivehundredexpense') ?? '';
+      twohundredexpense.text = prefs.getString('twohundredexpense') ?? '';
+      onehundredexpense.text = prefs.getString('onehundredexpense') ?? '';
       totalAmount = calculateTotalAmount();
     });
   }

@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      // darkTheme: AppTheme.darkTheme,
+      // themeMode: ThemeMode.system,
     );
   }
 }
