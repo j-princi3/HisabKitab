@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:frontend_hisab/services/searchwithdate_api.dart';
 
 class TableBasicsExample extends StatefulWidget {
-  const TableBasicsExample({Key? key}) : super(key: key);
+  const TableBasicsExample({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _TableBasicsExampleState createState() => _TableBasicsExampleState();
 }
 
@@ -20,16 +22,23 @@ class _TableBasicsExampleState extends State<TableBasicsExample> {
     _loadSelectedDate();
   }
 
-  void _loadSelectedDate() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+void _loadSelectedDate() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? selectedDate = prefs.getString('selected_date');
+  if (selectedDate != null) {
     setState(() {
-      // Retrieve the selected date from shared preferences
-      String? selectedDate = prefs.getString('selected_date');
-      if (selectedDate != null) {
-        _selectedDay = DateTime.parse(selectedDate);
-      }
+      _selectedDay = DateTime.parse(selectedDate);
     });
+    final response = await APIService.getDate(_selectedDay);
+    if (response['success']) {
+      // If the API call is successful, update the UI with the response data
+      print(response['data']);
+    } else {
+      // If the API call is unsuccessful, show an error message
+      print(response['error']);
+    }
   }
+}
 
   void _saveSelectedDate(DateTime date) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

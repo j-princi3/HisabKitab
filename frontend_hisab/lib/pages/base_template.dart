@@ -96,6 +96,7 @@ class MoneyBagIcon extends StatelessWidget {
         var responseData = await response;
         if(responseData['success']){
           Navigator.push(
+            // ignore: use_build_context_synchronously
             context,
             MaterialPageRoute(
               builder: (context) =>  MoneyBag(data: responseData['data'],),

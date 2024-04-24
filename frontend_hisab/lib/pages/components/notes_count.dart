@@ -33,11 +33,12 @@ class _NotesCountState extends State<NotesCount> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-      width: 300,
+      width: 200,
       height: 40,
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Theme.of(context).primaryColor, width: 1.0), 
         color: Theme.of(context).colorScheme.tertiary,
       ),
       child: TextField(
@@ -84,11 +85,11 @@ class _NotesCountState extends State<NotesCount> {
                 '$totalAmount',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              buildTextField(fivehundred, "500"),
+              buildTextField(fivehundred, "500 note"),
               const SizedBox(height: 5),
-              buildTextField(twohundred, "200"),
+              buildTextField(twohundred, "200 note"),
               const SizedBox(height: 5),
-              buildTextField(onehundred, "100"),
+              buildTextField(onehundred, "100 note"),
             ],
           ),
         ],
@@ -103,7 +104,8 @@ class _NotesCountState extends State<NotesCount> {
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.tertiary,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8), 
+        border: Border.all(color: Theme.of(context).colorScheme.onPrimary, width: 1.0),
       ),
       child: TextField(
         controller: controller,
@@ -114,7 +116,8 @@ class _NotesCountState extends State<NotesCount> {
         textAlignVertical: TextAlignVertical.center,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: Theme.of(context).textTheme.bodyLarge,
+          // hintStyle: Theme.of(context).textTheme.bodyLarge,
+          hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
           counterText: "",
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),

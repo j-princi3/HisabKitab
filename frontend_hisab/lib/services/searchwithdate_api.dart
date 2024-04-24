@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class APIService {
   static const String baseURL = 'http://192.168.0.106:8000'; // Update with your base URL
 
-  static Future<Map<String, dynamic>> getDate() async  {
+  static Future<Map<String, dynamic>> getDate(DateTime selectedDay) async  {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final selectedDate = prefs.getString('dateTime') ?? '';
     String currentDate = DateFormat('yyyy-MM-dd').format(selectedDate as DateTime);

@@ -20,6 +20,8 @@ class APIService {
     if (totalsales > 2147483647 || fiveHundredInt > 2147483647 || twoHundredInt > 2147483647 || oneHundredInt > 2147483647) {
       return {'success': false, 'error': 'Please enter values lesser than 2147483647.'};
     }
+    print('dateTime: $dateTime');
+    
     // if(totalsales<fiveHundredInt*500+twoHundredInt*200+oneHundredInt*100){
     //   return {'success': false, 'error': 'Expected sales cannot be less than the total amount of notes and expenses.'};
     // }      

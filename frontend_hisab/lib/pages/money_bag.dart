@@ -11,6 +11,7 @@ class MoneyBag extends StatelessWidget {
   Widget build(BuildContext context) {
     Map<String, dynamic> response = jsonDecode(data);
     List<dynamic> balance = response['BankBalnce'];
+    List names=['500 :','200 :','100 :','Total :','Date:'];
     return BaseTemplate(
       // Use BaseTemplate instead of Scaffold
       children: [
@@ -39,11 +40,23 @@ class MoneyBag extends StatelessWidget {
           itemCount: balance.length,
           itemBuilder: (context, index) {
             return ListTile(
-              title: Text(
-                balance[index].toString(),
-                style: const TextStyle(fontSize: 16),
-              ),
-            );
+  title: Row(
+    children: [
+      Text(
+        names[index],
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+      const SizedBox(width: 8), // Add spacing between name and balance
+      Text(
+        balance[index].toString(),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
+    ],
+  ),
+);
+
           },
         ),
         const SizedBox(height: 20),

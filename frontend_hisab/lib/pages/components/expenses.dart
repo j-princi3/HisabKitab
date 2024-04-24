@@ -103,7 +103,7 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                   prefs.setString('twohundred', '');
                   prefs.setString('onehundred', '');
                   prefs.setString('totalsales', '');
-                  prefs.setString('dateTime','');
+                  prefs.setString('dateTime',DateTime.now().toString());
                   showDialog(
                         // ignore: use_build_context_synchronously
                         context: context,
