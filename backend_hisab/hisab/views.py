@@ -78,7 +78,7 @@ class TodaysExpense(APIView):
                 date = serializer.validated_data.get('time')
                 no_of_expense = serializer.validated_data.get('no_of_expense')
                 list_of_expense = serializer.validated_data.get('list_of_expense')
-                if Count.objects.filter(time=date).exists():
+                if Parent_Expense.objects.filter(time=date).exists():
                     return Response({"message": "expense for this day already exists"}, status=status.HTTP_404_NOT_FOUND)
                 if no_of_expense == 0:
                     return Response({"message": "No expenses to add"}, status=status.HTTP_201_CREATED)
