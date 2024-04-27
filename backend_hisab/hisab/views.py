@@ -151,32 +151,29 @@ class SearchWithDate(APIView):
         try:
             parent = Parent_Expense.objects.get(time=date)
             child = Child_Expense.objects.filter(parent_id=parent.id)
-            expenseList = [{"description": i.description, "amount": i.amount} for i in child]
+            expenseList = [{ i.description : i.amount} for i in child]
         except Parent_Expense.DoesNotExist:
             expenseList = []  # Empty list if parent does not exist
         
         extraExpense = ExtraExpense.objects.filter(time=date)
-        extraExpenseList = [{"notes_500": i.notes_500, "notes_200": i.notes_200, "notes_100": i.notes_100} for i in extraExpense]
+        extraExpenseList = [{"500 ": i.notes_500, "200 ": i.notes_200, "100 ": i.notes_100} for i in extraExpense]
 
         # Collect all balance data if there are multiple objects
         balance_data_list = []
         for balance_obj in balanceOnThatDay:
             balance_data_list.append({
-                "notes_500": balance_obj.notes_500,
-                "notes_200": balance_obj.notes_200,
-                "notes_100": balance_obj.notes_100,
-                "total": balance_obj.total
+                "500 ": balance_obj.notes_500,
+                "200 ": balance_obj.notes_200,
+                "100 ": balance_obj.notes_100,
+                "total ": balance_obj.total
             })
 
         return Response({
-            "message": f"Hisab found on this date {date}",
-            "NotesCount": [notesCount.notes_500, notesCount.notes_200, notesCount.notes_100, notesCount.total_sales],
-            "BankBalance": balance_data_list,  # Include all balance objects in a list
-            "Expense": {
-                "no_of_expense": parent.no_of_expense if 'parent' in locals() else 0,  # Check if parent exists
-                "list_of_expense": expenseList
-            },
-            "ExtraExpense": extraExpenseList
+            "Date": f"{date}",
+            "Notes ": {"500":notesCount.notes_500, "200" :notesCount.notes_200, "100": notesCount.notes_100, "Expected Sales":notesCount.total_sales},
+            "Bank Balance": balance_data_list,  # Include all balance objects in a list
+            "Expense":    expenseList,
+            "Extra Expense": extraExpenseList
         }, status=status.HTTP_200_OK)
 
 class HomeView(View):
