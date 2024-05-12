@@ -7,7 +7,7 @@ class APIService {
 
   static Future<Map<String, dynamic>> extrasexpense(String username) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    String description = prefs.getString('description') ?? '';
     int fiveHundredInt =int.tryParse(prefs.getString('fivehundredexpense') ?? '0') ?? 0;
     int twoHundredInt = int.tryParse(prefs.getString('twohundredexpense') ?? '0') ?? 0;
     int oneHundredInt = int.tryParse(prefs.getString('onehundredexpense') ?? '0') ?? 0;
@@ -21,6 +21,7 @@ class APIService {
     
     final response =
         await http.post(Uri.parse('$baseURL/extraexpense/$username'), body: {
+      'description': description,
       'notes_500': fiveHundredInt.toString(),
       'notes_200': twoHundredInt.toString(),
       'notes_100': oneHundredInt.toString(),

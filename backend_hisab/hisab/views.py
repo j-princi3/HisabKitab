@@ -121,8 +121,9 @@ class TodaysExtraExpense(APIView):
                 notes_500 = serializer.validated_data.get('notes_500')
                 notes_200 = serializer.validated_data.get('notes_200')
                 notes_100 = serializer.validated_data.get('notes_100')
+                description = serializer.validated_data.get('description')
                 date = serializer.validated_data.get('time')
-                member = ExtraExpense(shop_name=mem.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100,time=date)
+                member = ExtraExpense(shop_name=mem.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100,description=description,time=date)
                 member.save()
                 last_balance = BankBalance.objects.latest('id')
                 notes1_500 = last_balance.notes_500 - notes_500
@@ -168,13 +169,16 @@ class SearchWithDate(APIView):
                 "total ": balance_obj.total
             })
 
-        return Response({
-            "Date": f"{date}",
-            "Notes ": {"500":notesCount.notes_500, "200" :notesCount.notes_200, "100": notesCount.notes_100, "Expected Sales":notesCount.total_sales},
-            "Bank Balance": balance_data_list,  # Include all balance objects in a list
-            "Expense":    expenseList,
-            "Extra Expense": extraExpenseList
-        }, status=status.HTTP_200_OK)
+            return Response({
+    "date": date,
+    "total_sales": notesCount.total_sales,
+    "notes_500": notesCount.notes_500,
+    "notes_200": notesCount.notes_200,
+    "notes_100": notesCount.notes_100,
+    "balance_data_list": balance_data_list,
+    "expenseList": expenseList,
+    "extraExpenseList": extraExpenseList
+}, status=status.HTTP_200_OK)
 
 class HomeView(View):
     def get(self, request):

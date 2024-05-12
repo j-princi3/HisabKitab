@@ -77,6 +77,7 @@ class MoneyBag extends StatelessWidget {
                   prefs.setString('fivehundredexpense', '');
                   prefs.setString('twohundredexpense', '');
                   prefs.setString('onehundredexpense', '');
+                  prefs.setString('description', '');
                   showDialog(
                         // ignore: use_build_context_synchronously
                         context: context,

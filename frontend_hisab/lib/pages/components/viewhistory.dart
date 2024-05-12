@@ -1,92 +1,138 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:frontend_hisab/services/searchwithdate_api.dart';
-import 'dart:convert';
-var t={};
-class TableBasicsExample extends StatefulWidget {
-  const TableBasicsExample({super.key});
 
-  @override
-  // ignore: library_private_types_in_public_api
-  _TableBasicsExampleState createState() => _TableBasicsExampleState();
-}
+var t = {};
 
-class _TableBasicsExampleState extends State<TableBasicsExample> {
-  DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDay =
-      DateTime.now(); // Initialize _selectedDay to DateTime.now()
+DateTime now = DateTime.now();
+int year = DateTime.now().year;
+int month = DateTime.now().month;
+int day = DateTime.now().day;
+
+class DatePickerApp extends StatelessWidget {
+  const DatePickerApp({Key? key});
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-    child: Column(
-      children: [
-        t.isEmpty
-            ? const Text('Select the date to view history')
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: t.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-  title: Row(
-    children: [
-      Expanded(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Text(
-            t.keys.elementAt(index),
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ),
-      ),
-      const SizedBox(width: 8), // Add spacing between name and balance
-      Expanded(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Text(
-            t.values.elementAt(index).toString(),
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
-      ),
-    ],
-  ),
-);
-                },
-              ),
-        TableCalendar(
-          firstDay: DateTime.parse('2024-04-11'),
-          lastDay: DateTime.now(),
-          focusedDay: _focusedDay,
-          selectedDayPredicate: (day) {
-            
-                t={'Message': 'Seclect the date'};
-            return isSameDay(_selectedDay, day);
-          },
-          onDaySelected: (selectedDay, focusedDay) async {
-            if (!isSameDay(_selectedDay, selectedDay)) {
-              String formattedDateTime =
-                  DateFormat('yyyy-MM-dd').format(selectedDay);
-              final response = APIService.getDate(formattedDateTime);
-              final responseData = await response;
-              if (responseData['success']) {
-                // If the API call is successful, update the UI with the response data
-                t = jsonDecode(responseData['data']);
-              } else {
-                // If the API call is unsuccessful, show an error message
-                t = {"Message": "Data was not found for the selected date"};
-              }
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-            }
-          },
-        ),
-      ],
-    ),
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      restorationScopeId: 'app',
+      home: const DatePickerExample(restorationId: 'main'),
     );
   }
+}
+
+class DatePickerExample extends StatefulWidget {
+  const DatePickerExample({Key? key, this.restorationId});
+
+  final String? restorationId;
+
+  @override
+  State<DatePickerExample> createState() => _DatePickerExampleState();
+}
+
+class _DatePickerExampleState extends State<DatePickerExample>
+    with RestorationMixin {
+  DateTime time = DateTime(year, month, day);
+
+  @override
+  String? get restorationId => widget.restorationId;
+  final RestorableDateTime _selectedDate =
+      RestorableDateTime(DateTime(year, month, day));
+  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture =
+      RestorableRouteFuture<DateTime?>(
+    onComplete: _selectDate,
+    onPresent: (NavigatorState navigator, Object? arguments) {
+      return navigator.restorablePush(
+        _datePickerRoute,
+        arguments: _selectedDate.value.millisecondsSinceEpoch,
+      );
+    },
+  );
+
+  static Route<DateTime> _datePickerRoute(
+    BuildContext context,
+    Object? arguments,
+  ) {
+    return DialogRoute<DateTime>(
+      context: context,
+      builder: (BuildContext context) {
+        DateTime now = DateTime.now();
+        return DatePickerDialog(
+          restorationId: 'date_picker_dialog',
+          initialEntryMode: DatePickerEntryMode.calendarOnly,
+          initialDate: DateTime.fromMillisecondsSinceEpoch(arguments! as int),
+          firstDate: DateTime(2024, 04, 12),
+          lastDate: DateTime(now.year, now.month, now.day),
+        );
+      },
+    );
+  }
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_selectedDate, 'selected_date');
+    registerForRestoration(
+        _restorableDatePickerRouteFuture, 'date_picker_route_future');
+  }
+
+  void _selectDate(DateTime? newSelectedDate) async {
+    if (newSelectedDate != null) {
+      // Perform asynchronous work outside of setState
+      String formattedDateTime = DateFormat('yyyy-MM-dd').format(newSelectedDate);
+      final response = await APIService.getDate(formattedDateTime);
+      final responseData = response['success'] ? jsonDecode(response['data']) : {"Message": "Data was not found for the selected date"};
+
+      setState(() {
+        // Update the state synchronously inside setState
+        _selectedDate.value = newSelectedDate;
+        time = _selectedDate.value;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              'Selected: ${_selectedDate.value.day}/${_selectedDate.value.month}/${_selectedDate.value.year}'),
+        ));
+        t = responseData;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  Column(
+  children: [
+    OutlinedButton(
+      onPressed: () {
+        _restorableDatePickerRouteFuture.present();
+      },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(
+            Theme.of(context).colorScheme.tertiary),
+        side: MaterialStateProperty.all<BorderSide>(
+            BorderSide(color: Theme.of(context).primaryColor, width: 1.0)), // Change color and width here
+        // Add more style properties as needed
+      ),
+      child: 
+      Text(
+        'Choose Date',
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+    ),
+    const SizedBox(height: 20),
+    ListView.builder(
+      shrinkWrap: true,  // Use this to prevent the ListView from expanding to the maximum possible height
+      itemCount: t.length,
+      itemBuilder: (context, index) {
+        String key = t.keys.elementAt(index);
+        return ListTile(
+          title: Text('$key: ${t[key]}'),
+        );
+      },
+    ),
+  ],
+);
+    
+  }
+  
 }

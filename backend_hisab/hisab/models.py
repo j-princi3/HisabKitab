@@ -29,6 +29,7 @@ class ExtraExpense(models.Model):
     notes_500 = models.IntegerField()
     notes_200 = models.IntegerField()
     notes_100 = models.IntegerField()
+    description=models.CharField(max_length=100)
     time=models.DateField()
 
 class BankBalance(models.Model):

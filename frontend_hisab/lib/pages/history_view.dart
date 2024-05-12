@@ -29,7 +29,7 @@ class CalendarPage extends StatelessWidget {
         ),
           ),
         
-        const TableBasicsExample(),
+        const DatePickerExample(),
       ],
     ),
   ],
