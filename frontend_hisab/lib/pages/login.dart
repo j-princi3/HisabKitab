@@ -119,6 +119,10 @@ class _LoginPageState extends State<LoginPage> {
                       passwordController.text.toString(),
                     );
                     if (response["success"] == true) {
+                  
+                      SharedPreferences prefs= await SharedPreferences.getInstance();
+                      prefs.setString('dateTime1',DateTime.now().toString());
+                      prefs.setString('dateTime',DateTime.now().toString());
                       // Login successful
                       await SharedPreferences.getInstance().then((prefs) {
                         prefs.setString(

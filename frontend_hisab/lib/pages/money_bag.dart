@@ -68,7 +68,6 @@ class MoneyBag extends StatelessWidget {
             color: Theme.of(context).colorScheme.tertiary,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Center(
             child: TextButton(
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
@@ -147,8 +146,8 @@ class MoneyBag extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
-          ),
         ),
+        const SizedBox(height: 20),
         ],
         ),
       ],

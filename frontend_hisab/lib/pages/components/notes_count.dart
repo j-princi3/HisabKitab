@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class NotesCount extends StatefulWidget {
   const NotesCount({super.key});
 
@@ -24,7 +25,8 @@ class _NotesCountState extends State<NotesCount> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector( // Wrap your widget tree with GestureDetector
+    return GestureDetector(
+      // Wrap your widget tree with GestureDetector
       onTap: () {
         // Dismiss the keyboard when tapped outside of the text field
         FocusScope.of(context).unfocus();
@@ -33,37 +35,40 @@ class _NotesCountState extends State<NotesCount> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-      width: 200,
-      height: 40,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Theme.of(context).primaryColor, width: 1.0), 
-        color: Theme.of(context).colorScheme.tertiary,
-      ),
-      child: TextField(
-        controller: salestoday,
-        keyboardType: TextInputType.number,
-        maxLength: 15,
-        style: Theme.of(context).textTheme.bodyLarge,
-        textAlign: TextAlign.right,
-        textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-          hintText: "Expected Sales",
-          hintStyle: Theme.of(context).textTheme.bodyLarge,
-          counterText: "",
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
-        ),
-        onChanged: (value) {
-          setState(() {
-            totalAmount = calculateTotalAmount();
-          });
-          // Save changed values to SharedPreferences when they are modified
-          saveChangedValues();
-        },
-      ),
-    ),
+            width: 200,
+            height: 40,
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border:
+                  Border.all(color: Theme.of(context).primaryColor, width: 1.0),
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+            child: TextField(
+              controller: salestoday,
+              keyboardType: TextInputType.number,
+              maxLength: 15,
+              style: Theme.of(context).textTheme.bodyLarge,
+              textAlign: TextAlign.right,
+              textAlignVertical: TextAlignVertical.center,
+              decoration: InputDecoration(
+                hintText: "Sales",
+                hintStyle: Theme.of(context).textTheme.bodyLarge,
+                counterText: "",
+                border: InputBorder.none,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  totalAmount = calculateTotalAmount();
+                });
+                // Save changed values to SharedPreferences when they are modified
+                saveChangedValues();
+              },
+            ),
+          ),
+          const SizedBox(height: 20),
           Container(
             width: 174,
             height: 47,
@@ -71,7 +76,7 @@ class _NotesCountState extends State<NotesCount> {
               color: Theme.of(context).colorScheme.tertiary,
               borderRadius: BorderRadius.circular(20),
             ),
-            child:  Center(
+            child: Center(
               child: Text(
                 'Notes',
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -81,15 +86,15 @@ class _NotesCountState extends State<NotesCount> {
           const SizedBox(height: 15),
           Column(
             children: [
-               Text(
+              Text(
                 '$totalAmount',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              buildTextField(fivehundred, "500 note"),
+              buildTextField(fivehundred, "~ 500 ~"),
               const SizedBox(height: 5),
-              buildTextField(twohundred, "200 note"),
+              buildTextField(twohundred, "~ 200 ~"),
               const SizedBox(height: 5),
-              buildTextField(onehundred, "100 note"),
+              buildTextField(onehundred, "~ 100 ~"),
             ],
           ),
         ],
@@ -104,8 +109,9 @@ class _NotesCountState extends State<NotesCount> {
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.tertiary,
-        borderRadius: BorderRadius.circular(8), 
-        border: Border.all(color: Theme.of(context).colorScheme.onPrimary, width: 1.0),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+            color: Theme.of(context).colorScheme.onPrimary, width: 1.0),
       ),
       child: TextField(
         controller: controller,
@@ -117,10 +123,14 @@ class _NotesCountState extends State<NotesCount> {
         decoration: InputDecoration(
           hintText: hintText,
           // hintStyle: Theme.of(context).textTheme.bodyLarge,
-          hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+          hintStyle: Theme.of(context)
+              .textTheme
+              .bodyLarge
+              ?.copyWith(fontWeight: FontWeight.bold),
           counterText: "",
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
         ),
         onChanged: (value) {
           setState(() {
@@ -137,7 +147,9 @@ class _NotesCountState extends State<NotesCount> {
     int fiveHundredValue = int.tryParse(fivehundred.text) ?? 0;
     int twoHundredValue = int.tryParse(twohundred.text) ?? 0;
     int oneHundredValue = int.tryParse(onehundred.text) ?? 0;
-    return (fiveHundredValue * 500) + (twoHundredValue * 200) + (oneHundredValue * 100);
+    return (fiveHundredValue * 500) +
+        (twoHundredValue * 200) +
+        (oneHundredValue * 100);
   }
 
   Future<void> saveChangedValues() async {

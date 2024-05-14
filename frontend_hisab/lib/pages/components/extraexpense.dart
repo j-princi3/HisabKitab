@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class NotesCountexpense extends StatefulWidget {
   const NotesCountexpense({super.key});
 
@@ -24,7 +25,8 @@ class _NotesCountexpenseState extends State<NotesCountexpense> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector( // Wrap your widget tree with GestureDetector
+    return GestureDetector(
+      // Wrap your widget tree with GestureDetector
       onTap: () {
         // Dismiss the keyboard when tapped outside of the text field
         FocusScope.of(context).unfocus();
@@ -39,7 +41,7 @@ class _NotesCountexpenseState extends State<NotesCountexpense> {
               color: Theme.of(context).colorScheme.tertiary,
               borderRadius: BorderRadius.circular(20),
             ),
-            child:  Center(
+            child: Center(
               child: Text(
                 'Extra Expense',
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -49,48 +51,54 @@ class _NotesCountexpenseState extends State<NotesCountexpense> {
           const SizedBox(height: 15),
           Column(
             children: [
-               Text(
+              Text(
                 '$totalAmount',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 5),
               Container(
-      width: 176,
-      height: 40,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.tertiary,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Theme.of(context).colorScheme.onPrimary, width: 1.0),
-      ),
-      child: TextField(
-        controller: descriptioncontroller,
-        keyboardType: TextInputType.text,
-        style: Theme.of(context).textTheme.bodyLarge,
-        textAlign: TextAlign.right,
-        textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-          hintText: "description",
-          // hintStyle: Theme.of(context).textTheme.bodyLarge,
-          hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-          counterText: "",
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
-        ),
-        onChanged: (value) {
-          setState(() {
-            totalAmount = calculateTotalAmount();
-          });
-          // Save changed values to SharedPreferences when they are modified
-          saveChangedValues();
-        },
-      ),
-    ),
-              buildTextField(fivehundredexpense, "500 note"),
+                width: 176,
+                height: 40,
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.tertiary,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      width: 1.0),
+                ),
+                child: TextField(
+                  controller: descriptioncontroller,
+                  keyboardType: TextInputType.text,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  textAlign: TextAlign.right,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    hintText: "description",
+                    // hintStyle: Theme.of(context).textTheme.bodyLarge,
+                    hintStyle: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                    counterText: "",
+                    border: InputBorder.none,
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      totalAmount = calculateTotalAmount();
+                    });
+                    // Save changed values to SharedPreferences when they are modified
+                    saveChangedValues();
+                  },
+                ),
+              ),
+              buildTextField(fivehundredexpense, "~ 500 ~"),
               const SizedBox(height: 5),
-              buildTextField(twohundredexpense, "200 note"),
+              buildTextField(twohundredexpense, "~ 200 ~"),
               const SizedBox(height: 5),
-              buildTextField(onehundredexpense, "100 note"),
+              buildTextField(onehundredexpense, "~ 100 ~"),
             ],
           ),
         ],
@@ -106,7 +114,8 @@ class _NotesCountexpenseState extends State<NotesCountexpense> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.tertiary,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Theme.of(context).colorScheme.onPrimary, width: 1.0),
+        border: Border.all(
+            color: Theme.of(context).colorScheme.onPrimary, width: 1.0),
       ),
       child: TextField(
         controller: controller,
@@ -118,10 +127,14 @@ class _NotesCountexpenseState extends State<NotesCountexpense> {
         decoration: InputDecoration(
           hintText: hintText,
           // hintStyle: Theme.of(context).textTheme.bodyLarge,
-          hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+          hintStyle: Theme.of(context)
+              .textTheme
+              .bodyLarge
+              ?.copyWith(fontWeight: FontWeight.bold),
           counterText: "",
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
         ),
         onChanged: (value) {
           setState(() {
@@ -138,7 +151,9 @@ class _NotesCountexpenseState extends State<NotesCountexpense> {
     int fiveHundredexpenseValue = int.tryParse(fivehundredexpense.text) ?? 0;
     int twoHundredexpenseValue = int.tryParse(twohundredexpense.text) ?? 0;
     int oneHundredexpenseValue = int.tryParse(onehundredexpense.text) ?? 0;
-    return (fiveHundredexpenseValue * 500) + (twoHundredexpenseValue * 200) + (oneHundredexpenseValue * 100);
+    return (fiveHundredexpenseValue * 500) +
+        (twoHundredexpenseValue * 200) +
+        (oneHundredexpenseValue * 100);
   }
 
   Future<void> saveChangedValues() async {

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:frontend_hisab/services/searchwithdate_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 var t = {};
 
@@ -12,7 +13,7 @@ int month = DateTime.now().month;
 int day = DateTime.now().day;
 
 class DatePickerApp extends StatelessWidget {
-  const DatePickerApp({Key? key});
+  const DatePickerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class DatePickerApp extends StatelessWidget {
 }
 
 class DatePickerExample extends StatefulWidget {
-  const DatePickerExample({Key? key, this.restorationId});
+  const DatePickerExample({super.key, this.restorationId});
 
   final String? restorationId;
 
@@ -36,6 +37,21 @@ class DatePickerExample extends StatefulWidget {
 class _DatePickerExampleState extends State<DatePickerExample>
     with RestorationMixin {
   DateTime time = DateTime(year, month, day);
+  @override
+  void initState() {
+    super.initState();
+    _initializeTime();
+  }
+
+  _initializeTime() {
+    getDateTime().then((dateTime) {
+      setState(() {
+        if (dateTime != '') {
+          time = DateTime.parse(dateTime);
+        }
+      });
+    });
+  }
 
   @override
   String? get restorationId => widget.restorationId;
@@ -81,9 +97,12 @@ class _DatePickerExampleState extends State<DatePickerExample>
   void _selectDate(DateTime? newSelectedDate) async {
     if (newSelectedDate != null) {
       // Perform asynchronous work outside of setState
-      String formattedDateTime = DateFormat('yyyy-MM-dd').format(newSelectedDate);
+      String formattedDateTime =
+          DateFormat('yyyy-MM-dd').format(newSelectedDate);
       final response = await APIService.getDate(formattedDateTime);
-      final responseData = response['success'] ? jsonDecode(response['data']) : {"Message": "Data was not found for the selected date"};
+      final responseData = response['success']
+          ? jsonDecode(response['data'])
+          : {"Message": "Data was not found for the selected date"};
 
       setState(() {
         // Update the state synchronously inside setState
@@ -93,6 +112,7 @@ class _DatePickerExampleState extends State<DatePickerExample>
           content: Text(
               'Selected: ${_selectedDate.value.day}/${_selectedDate.value.month}/${_selectedDate.value.year}'),
         ));
+        saveDateTime(_selectedDate.value);
         t = responseData;
       });
     }
@@ -100,39 +120,69 @@ class _DatePickerExampleState extends State<DatePickerExample>
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
-  children: [
-    OutlinedButton(
-      onPressed: () {
-        _restorableDatePickerRouteFuture.present();
-      },
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(
-            Theme.of(context).colorScheme.tertiary),
-        side: MaterialStateProperty.all<BorderSide>(
-            BorderSide(color: Theme.of(context).primaryColor, width: 1.0)), // Change color and width here
-        // Add more style properties as needed
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          OutlinedButton(
+            onPressed: () {
+              _restorableDatePickerRouteFuture.present();
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  Theme.of(context).colorScheme.tertiary),
+              side: MaterialStateProperty.all<BorderSide>(BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 1.0)), // Change color and width here
+              // Add more style properties as needed
+            ),
+            child: Text(
+              '${time.day}/${time.month}/${time.year}',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ),
+          const SizedBox(height: 20),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(), // Add this line
+
+            shrinkWrap:
+                true, // Use this to prevent the ListView from expanding to the maximum possible height
+            itemCount: t.length,
+
+            itemBuilder: (context, index) {
+              String key = t.keys.elementAt(index);
+              var value = t[key];
+              if (RegExp(r'^\d+\)').hasMatch(key)) {
+                // Extract the next part of the key after ')'
+                key = key.substring(key.indexOf(')') + 1).trim();
+              }
+              return ListTile(
+                title: Text(
+                  '$key: $value',
+                  style: key == '1' ||
+                          key == '2' ||
+                          key == '3' ||
+                          key == '4' ||
+                          key == '5'
+                      ? const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold)
+                      : null,
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      child: 
-      Text(
-        'Choose Date',
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-    ),
-    const SizedBox(height: 20),
-    ListView.builder(
-      shrinkWrap: true,  // Use this to prevent the ListView from expanding to the maximum possible height
-      itemCount: t.length,
-      itemBuilder: (context, index) {
-        String key = t.keys.elementAt(index);
-        return ListTile(
-          title: Text('$key: ${t[key]}'),
-        );
-      },
-    ),
-  ],
-);
-    
+    );
   }
-  
+}
+
+Future<void> saveDateTime(DateTime dateTime) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('dateTime1', dateTime.toString());
+}
+
+Future<String> getDateTime() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final storedDateTime = prefs.getString('dateTime1') ?? '';
+  return storedDateTime;
 }

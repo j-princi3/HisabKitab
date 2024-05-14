@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend_hisab/services/hisab_api.dart';
+
 var expenselist = [];
+
 class ExpenseItem {
   final String description;
   final int amount;
@@ -46,7 +48,6 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                 onTap: () {
                   setState(() {
                     _expenseItems.add(ExpenseItem('', 0));
-
                   });
                 },
                 child: Icon(Icons.add,
@@ -96,76 +97,74 @@ class _ExpenseItemsState extends State<ExpenseItems> {
               onPressed: () async {
                 getUserNamefromSharedPref(_expenseItems);
                 final prefs = await SharedPreferences.getInstance();
-                final response = await APIService.hisab(prefs.getString('username') ?? '');
+                final response =
+                    await APIService.hisab(prefs.getString('username') ?? '');
                 if (response['success'] == true) {
                   expenselist.clear();
                   prefs.setString('fivehundred', '');
                   prefs.setString('twohundred', '');
                   prefs.setString('onehundred', '');
                   prefs.setString('totalsales', '');
-                  prefs.setString('dateTime',DateTime.now().toString());
+                  prefs.setString('dateTime', DateTime.now().toString());
                   showDialog(
-                        // ignore: use_build_context_synchronously
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                                dialogBackgroundColor:
-                                    Theme.of(context).colorScheme.background),
-                            child: AlertDialog(
-                              title: const Text(
-                                'Success',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              content: const Text(
-                                  'Your accounting is saved ,check out pages for details.'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('OK',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge),
-                                ),
-                              ],
+                      // ignore: use_build_context_synchronously
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                              dialogBackgroundColor:
+                                  Theme.of(context).colorScheme.background),
+                          child: AlertDialog(
+                            title: const Text(
+                              'Success',
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          );
-                        });
-                }
-                else{// Login failed
-                final msg = response['error'];
-                      // Add your logic here, such as displaying an error message
-                      showDialog(
-                        // ignore: use_build_context_synchronously
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                                dialogBackgroundColor:
-                                    Theme.of(context).colorScheme.background),
-                            child: AlertDialog(
-                              title: const Text(
-                                'Failed',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                            content: const Text(
+                                'Your accounting is saved ,check out pages for details.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge),
                               ),
-                              content:  Text(
-                                  '$msg.'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('OK',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge),
-                                ),
-                              ],
+                            ],
+                          ),
+                        );
+                      });
+                } else {
+                  // Login failed
+                  final msg = response['error'];
+                  // Add your logic here, such as displaying an error message
+                  showDialog(
+                      // ignore: use_build_context_synchronously
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                              dialogBackgroundColor:
+                                  Theme.of(context).colorScheme.background),
+                          child: AlertDialog(
+                            title: const Text(
+                              'Failed',
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          );
-                        });
+                            content: Text('$msg.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge),
+                              ),
+                            ],
+                          ),
+                        );
+                      });
                 }
               },
               child: Text(
@@ -278,6 +277,5 @@ void getUserNamefromSharedPref(List<ExpenseItem> expenseItems) {
       expenselist.add({'description': item.description, 'amount': item.amount});
     }
     expenseItems.clear();
-    
   });
 }
