@@ -21,9 +21,9 @@ class APIService {
       return {'success': false, 'error': 'Please enter values lesser than 2147483647.'};
     }
     
-    // if(totalsales<fiveHundredInt*500+twoHundredInt*200+oneHundredInt*100){
-    //   return {'success': false, 'error': 'Expected sales cannot be less than the total amount of notes and expenses.'};
-    // }      
+    if(totalsales==0){
+      return {'success': false, 'error': 'Expected sales cannot be Zero.'};
+    }      
     if (fiveHundredInt + twoHundredInt + oneHundredInt == 0) {
       return {'success': false, 'error': 'Please enter the notes count.'};
     }

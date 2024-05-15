@@ -162,6 +162,7 @@ class SearchWithDate(APIView):
             extraExpense = ExtraExpense.objects.filter(time=date)
             for expense in extraExpense:
                 data[i]="Extra Expenses for the day"
+                data[f"{i})."]= expense.description,
                 data[f"{i})500"] =  expense.notes_500,
                 data[f"{i})200"]= expense.notes_200,
                 data[f"{i})100"]= expense.notes_100
