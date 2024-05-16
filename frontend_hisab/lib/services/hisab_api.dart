@@ -22,10 +22,10 @@ class APIService {
     }
     
     if(totalsales==0){
-      return {'success': false, 'error': 'Expected sales cannot be Zero.'};
+      return {'success': false, 'error': 'Expected sales cannot be Zero'};
     }      
     if (fiveHundredInt + twoHundredInt + oneHundredInt == 0) {
-      return {'success': false, 'error': 'Please enter the notes count.'};
+      return {'success': false, 'error': 'Please enter the notes count'};
     }
     final response2 = await http.post(
       Uri.parse('$baseURL/expense/$username'),

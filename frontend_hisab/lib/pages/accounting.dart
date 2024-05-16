@@ -9,6 +9,8 @@ class AccountingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+    bool someBooleanValue = true;
     return GestureDetector(
       onTap: () {
         // Dismiss the keypad when clicked on the screen
@@ -38,7 +40,7 @@ class AccountingPage extends StatelessWidget {
               const DatePickerExample(),
               const NotesCount(),
               const SizedBox(height: 20),
-              const ExpenseItems(),
+              ExpenseItems(someValue: someBooleanValue),
               const SizedBox(height: 20),
             ],
           ),

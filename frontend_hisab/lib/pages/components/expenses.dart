@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:frontend_hisab/services/hisab_api.dart';
-
+import 'package:frontend_hisab/services/hisab_api.dart' as salesservice;
+import 'package:frontend_hisab/services/extrasexpense_api.dart' as expenseservice;
 var expenselist = [];
 
 class ExpenseItem {
@@ -12,7 +12,8 @@ class ExpenseItem {
 }
 
 class ExpenseItems extends StatefulWidget {
-  const ExpenseItems({super.key});
+  final bool someValue;
+  const ExpenseItems({super.key, required this.someValue});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -97,9 +98,11 @@ class _ExpenseItemsState extends State<ExpenseItems> {
               onPressed: () async {
                 getUserNamefromSharedPref(_expenseItems);
                 final prefs = await SharedPreferences.getInstance();
+                if(widget.someValue == true){
+                  
                 final response =
-                    await APIService.hisab(prefs.getString('username') ?? '');
-                if (response['success'] == true) {
+                    await salesservice.APIService.hisab(prefs.getString('username') ?? '');
+                if (response['success'] == true ){
                   expenselist.clear();
                   prefs.setString('fivehundred', '');
                   prefs.setString('twohundred', '');
@@ -166,20 +169,93 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                         );
                       });
                 }
+              }
+              else{
+                if(widget.someValue == false){
+                  final response = await expenseservice.APIService.extrasexpense(prefs.getString('username') ?? '');
+                if (response['success'] == true) {
+                  prefs.setString('fivehundredexpense', '');
+                  prefs.setString('twohundredexpense', '');
+                  prefs.setString('onehundredexpense', '');
+                  prefs.setString('description', '');
+                  showDialog(
+                        // ignore: use_build_context_synchronously
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                                dialogBackgroundColor:
+                                    Theme.of(context).colorScheme.background),
+                            child: AlertDialog(
+                              title: const Text(
+                                'Success',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content: const Text(
+                                  'Your expense is saved ,check out pages for details.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                }
+                else{// Login failed
+                final msg = response['error'];
+                      // Add your logic here, such as displaying an error message
+                      showDialog(
+                        // ignore: use_build_context_synchronously
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                                dialogBackgroundColor:
+                                    Theme.of(context).colorScheme.background),
+                            child: AlertDialog(
+                              title: const Text(
+                                'Failed',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content:  Text(
+                                  '$msg.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                }
+              }
+              }
+              
               },
               child: Text(
-                ' Save ',
+                'Save',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
           ),
         ),
-        const SizedBox(height: 25),
       ],
     );
   }
 }
-
 class ExpenseBox extends StatelessWidget {
   final ExpenseItem expenseItem;
   final ValueChanged<String> onChanged;

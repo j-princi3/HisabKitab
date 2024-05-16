@@ -1,6 +1,6 @@
 from rest_framework.views import APIView, View
-from hisab.models import Register, Count, Parent_Expense,Child_Expense, ExtraExpense, BankBalance
-from hisab.serializers import ShopSerializer, CountSerializer, ExpenseSerializer, ExtraExpenseSerializer
+from hisab.models import Register, Count, Parent_Expense,Child_Expense, ExtraExpense, BankBalance, Extra_Expense_Details
+from hisab.serializers import ShopSerializer, CountSerializer, ExpenseSerializer, ExtraExpenseSerializer 
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.response import Response
@@ -114,6 +114,7 @@ class BankBalanceView(APIView):
 #API for extra expenses for Bank bag page (updates bank balance)
 class TodaysExtraExpense(APIView):
     def post(self, request, username):
+        print("list_of_expense")
         serializer = ExtraExpenseSerializer(data=request.data)
         if serializer.is_valid():
             try:
@@ -122,8 +123,11 @@ class TodaysExtraExpense(APIView):
                 notes_200 = serializer.validated_data.get('notes_200')
                 notes_100 = serializer.validated_data.get('notes_100')
                 description = serializer.validated_data.get('description')
+                list_of_expense = serializer.validated_data.get('list_of_expense')
+                no_of_expense = serializer.validated_data.get('no_of_expense')
                 date = serializer.validated_data.get('time')
-                member = ExtraExpense(shop_name=mem.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100,description=description,time=date)
+                print(list_of_expense)
+                member = ExtraExpense(shop_name=mem.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100,description=description,time=date,no_of_expense=no_of_expense)
                 member.save()
                 last_balance = BankBalance.objects.latest('id')
                 notes1_500 = last_balance.notes_500 - notes_500
@@ -131,6 +135,12 @@ class TodaysExtraExpense(APIView):
                 notes1_100 = last_balance.notes_100 - notes_100
                 mem_bank = BankBalance(shop_name=mem.shop_name, notes_500=notes1_500, notes_200=notes1_200, notes_100=notes1_100,total=notes1_500*500+notes1_200*200+notes1_100*100,time=date)
                 mem_bank.save()
+                if no_of_expense == 0:
+                    return Response({"message": "Extra Expense Added Successfully {member.shop_name} on {date}"}, status=status.HTTP_201_CREATED)
+                if no_of_expense == len(list_of_expense):
+                    for i in range(no_of_expense):
+                        child = Extra_Expense_Details(parent_id=member.id,description=list_of_expense[i]['description'],amount=list_of_expense[i]['amount'])
+                        child.save()
                 return Response({"message": "Extra Expense Added Successfully {member.shop_name} on {date}"}, status=status.HTTP_201_CREATED)
             except ObjectDoesNotExist:
                 return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -162,10 +172,13 @@ class SearchWithDate(APIView):
             extraExpense = ExtraExpense.objects.filter(time=date)
             for expense in extraExpense:
                 data[i]="Extra Expenses for the day"
-                data[f"{i})."]= expense.description,
+                data[f"{i})-"]= expense.description,
                 data[f"{i})500"] =  expense.notes_500,
                 data[f"{i})200"]= expense.notes_200,
                 data[f"{i})100"]= expense.notes_100
+                details=Extra_Expense_Details.objects.filter(parent_id=expense.id)
+                for detail in details:
+                    data[f"{i}){detail.description}"]= detail.amount
                 i+=1
             try:
                 balanceOnThatDay = BankBalance.objects.filter(time=date) # Changed to filter
