@@ -155,43 +155,47 @@ class SearchWithDate(APIView):
         date = request.query_params.get('date')
         i=1        
         
-        try:
-            notesCount = Count.objects.get(time=date)
+        notesCount = Count.objects.filter(time=date).first()
+        if notesCount:
             data[i]="Notes Count for the day"
             data["sales"]= notesCount.total_sales,
             data["500"]= notesCount.notes_500,
             data["200"]= notesCount.notes_200,
             data["100"]= notesCount.notes_100,
             i+=1
-            parent = Parent_Expense.objects.get(time=date)
+
+        parent = Parent_Expense.objects.filter(time=date).first()
+        if parent:
             child = Child_Expense.objects.filter(parent_id=parent.id)
             data[i]="Expenses for the day"
             for expense in child:
                 data[f"{expense.description}"] =  expense.amount
             i+=1
-            extraExpense = ExtraExpense.objects.filter(time=date)
-            for expense in extraExpense:
-                data[i]="Extra Expenses for the day"
-                data[f"{i})-"]= expense.description,
-                data[f"{i})500"] =  expense.notes_500,
-                data[f"{i})200"]= expense.notes_200,
-                data[f"{i})100"]= expense.notes_100
-                details=Extra_Expense_Details.objects.filter(parent_id=expense.id)
-                for detail in details:
-                    data[f"{i}){detail.description}"]= detail.amount
-                i+=1
-            try:
-                balanceOnThatDay = BankBalance.objects.filter(time=date) # Changed to filter
-                for balance_obj in balanceOnThatDay:
-                    data[i]="Bank Balance for the day"
-                    data[f"{i})500"] = balance_obj.notes_500,
-                    data[f"{i})200"] = balance_obj.notes_200,
-                    data[f"{i})100"] = balance_obj.notes_100,
-                    data[f"{i})total"] = balance_obj.total
-            except ObjectDoesNotExist:
-                return Response(data, status=status.HTTP_404_NOT_FOUND)
-        except ObjectDoesNotExist:
-            return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+        extraExpense = ExtraExpense.objects.filter(time=date)
+        for expense in extraExpense:
+            data[i]="Extra Expenses for the day"
+            data[f"{i})-"]= expense.description,
+            data[f"{i})500"] =  expense.notes_500,
+            data[f"{i})200"]= expense.notes_200,
+            data[f"{i})100"]= expense.notes_100
+            details=Extra_Expense_Details.objects.filter(parent_id=expense.id)
+            for detail in details:
+                data[f"{i}){detail.description}"]= detail.amount
+            i+=1
+
+        balanceOnThatDay = BankBalance.objects.filter(time=date)
+        if balanceOnThatDay.exists():
+            for balance_obj in balanceOnThatDay:
+                data[i]="Bank Balance for the day"
+                data[f"{i})500"] = balance_obj.notes_500,
+                data[f"{i})200"] = balance_obj.notes_200,
+                data[f"{i})100"] = balance_obj.notes_100,
+                data[f"{i})total"] = balance_obj.total
+        
+        if not data:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
         return Response(data, status=status.HTTP_200_OK)
 
 class HomeView(View):
