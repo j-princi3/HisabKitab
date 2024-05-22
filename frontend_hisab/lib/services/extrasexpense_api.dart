@@ -9,7 +9,6 @@ class APIService {
 
   static Future<Map<String, dynamic>> extrasexpense(String username) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String description = prefs.getString('description') ?? '';
     int fiveHundredInt =int.tryParse(prefs.getString('fivehundredexpense') ?? '0') ?? 0;
     int twoHundredInt = int.tryParse(prefs.getString('twohundredexpense') ?? '0') ?? 0;
     int oneHundredInt = int.tryParse(prefs.getString('onehundredexpense') ?? '0') ?? 0;
@@ -17,9 +16,6 @@ class APIService {
     if (fiveHundredInt > 2147483647 || twoHundredInt > 2147483647 || oneHundredInt > 2147483647) {
       return {'success': false, 'error': 'Please enter values lesser than 2147483647'};
     }    
-    if(description.isEmpty) {
-      return {'success': false, 'error': 'Please enter the description'};
-    }
     if (fiveHundredInt + twoHundredInt + oneHundredInt == 0) {
       return {'success': false, 'error': 'Please enter the notes count'};
     }
@@ -30,7 +26,6 @@ class APIService {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode({
-      'description': description,
       'notes_500': fiveHundredInt.toString(),
       'notes_200': twoHundredInt.toString(),
       'notes_100': oneHundredInt.toString(),

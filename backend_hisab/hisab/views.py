@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
-
+from hisab.comma import add_comma
 #API for Shop-User Registration
 # same members can be added to database multiple times
 class ShopRegistration(APIView):
@@ -122,12 +122,11 @@ class TodaysExtraExpense(APIView):
                 notes_500 = serializer.validated_data.get('notes_500')
                 notes_200 = serializer.validated_data.get('notes_200')
                 notes_100 = serializer.validated_data.get('notes_100')
-                description = serializer.validated_data.get('description')
                 list_of_expense = serializer.validated_data.get('list_of_expense')
                 no_of_expense = serializer.validated_data.get('no_of_expense')
                 date = serializer.validated_data.get('time')
                 print(list_of_expense)
-                member = ExtraExpense(shop_name=mem.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100,description=description,time=date,no_of_expense=no_of_expense)
+                member = ExtraExpense(shop_name=mem.shop_name, notes_500=notes_500, notes_200=notes_200, notes_100=notes_100,time=date,no_of_expense=no_of_expense)
                 member.save()
                 last_balance = BankBalance.objects.latest('id')
                 notes1_500 = last_balance.notes_500 - notes_500
@@ -158,40 +157,46 @@ class SearchWithDate(APIView):
         notesCount = Count.objects.filter(time=date).first()
         if notesCount:
             data[i]="Notes Count for the day"
-            data["sales"]= notesCount.total_sales,
-            data["500"]= notesCount.notes_500,
-            data["200"]= notesCount.notes_200,
-            data["100"]= notesCount.notes_100,
+            data["    sales  "]= add_comma(notesCount.total_sales),
+            data["    500  "]= add_comma(notesCount.notes_500),
+            data["    200  "]= add_comma(notesCount.notes_200),
+            data["    100  "]= add_comma(notesCount.notes_100),
+            data["                Total   "]= add_comma(notesCount.notes_500*500+notesCount.notes_200*200+notesCount.notes_100*100)
             i+=1
 
         parent = Parent_Expense.objects.filter(time=date).first()
         if parent:
             child = Child_Expense.objects.filter(parent_id=parent.id)
             data[i]="Expenses for the day"
+            j=0
+            total=0
             for expense in child:
-                data[f"{expense.description}"] =  expense.amount
+                j+=1
+                data[f"   {j}) {add_comma(expense.amount)}"] = expense.description
+                total+=expense.amount
             i+=1
-
+            data[f"                Total  "]=add_comma(total)
         extraExpense = ExtraExpense.objects.filter(time=date)
+        j=0
         for expense in extraExpense:
+            j+=1
             data[i]="Extra Expenses for the day"
-            data[f"{i})-"]= expense.description,
-            data[f"{i})500"] =  expense.notes_500,
-            data[f"{i})200"]= expense.notes_200,
-            data[f"{i})100"]= expense.notes_100
+            data[f"{i})  500  "] = add_comma(expense.notes_500),
+            data[f"{i})  200  "]= add_comma(expense.notes_200),
+            data[f"{i})  100  "]= add_comma(expense.notes_100)
             details=Extra_Expense_Details.objects.filter(parent_id=expense.id)
             for detail in details:
-                data[f"{i}){detail.description}"]= detail.amount
+                data[f"{i}){detail.description}  "]= add_comma(detail.amount)
             i+=1
 
         balanceOnThatDay = BankBalance.objects.filter(time=date)
         if balanceOnThatDay.exists():
             for balance_obj in balanceOnThatDay:
                 data[i]="Bank Balance for the day"
-                data[f"{i})500"] = balance_obj.notes_500,
-                data[f"{i})200"] = balance_obj.notes_200,
-                data[f"{i})100"] = balance_obj.notes_100,
-                data[f"{i})total"] = balance_obj.total
+                data[f"{i})  500  "] = add_comma(balance_obj.notes_500),
+                data[f"{i})  200  "] = add_comma(balance_obj.notes_200),
+                data[f"{i})  100  "] = add_comma(balance_obj.notes_100),
+                data[f"{i})  Total "] = add_comma(balance_obj.total)
         
         if not data:
             return Response(status=status.HTTP_404_NOT_FOUND)

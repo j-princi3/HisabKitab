@@ -22,7 +22,6 @@ class ExpenseItems extends StatefulWidget {
 
 class _ExpenseItemsState extends State<ExpenseItems> {
   final List<ExpenseItem> _expenseItems = [];
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -178,6 +177,7 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                   prefs.setString('twohundredexpense', '');
                   prefs.setString('onehundredexpense', '');
                   prefs.setString('description', '');
+                  _expenseItems.clear();
                   showDialog(
                         // ignore: use_build_context_synchronously
                         context: context,

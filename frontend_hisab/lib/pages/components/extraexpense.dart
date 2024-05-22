@@ -56,44 +56,6 @@ class _NotesCountexpenseState extends State<NotesCountexpense> {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 5),
-              Container(
-                width: 176,
-                height: 40,
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.tertiary,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      width: 1.0),
-                ),
-                child: TextField(
-                  controller: descriptioncontroller,
-                  keyboardType: TextInputType.text,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.right,
-                  textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
-                    hintText: "description",
-                    // hintStyle: Theme.of(context).textTheme.bodyLarge,
-                    hintStyle: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                    counterText: "",
-                    border: InputBorder.none,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      totalAmount = calculateTotalAmount();
-                    });
-                    // Save changed values to SharedPreferences when they are modified
-                    saveChangedValues();
-                  },
-                ),
-              ),
               buildTextField(fivehundredexpense, "~ 500 ~"),
               const SizedBox(height: 5),
               buildTextField(twohundredexpense, "~ 200 ~"),
@@ -158,7 +120,6 @@ class _NotesCountexpenseState extends State<NotesCountexpense> {
 
   Future<void> saveChangedValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('description', descriptioncontroller.text);
     prefs.setString('fivehundredexpense', fivehundredexpense.text);
     prefs.setString('twohundredexpense', twohundredexpense.text);
     prefs.setString('onehundredexpense', onehundredexpense.text);
@@ -167,7 +128,6 @@ class _NotesCountexpenseState extends State<NotesCountexpense> {
   Future<void> retrieveSavedValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      descriptioncontroller.text = prefs.getString('description') ?? '';
       fivehundredexpense.text = prefs.getString('fivehundredexpense') ?? '';
       twohundredexpense.text = prefs.getString('twohundredexpense') ?? '';
       onehundredexpense.text = prefs.getString('onehundredexpense') ?? '';

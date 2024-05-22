@@ -21,7 +21,7 @@ class ExtraExpenseSerializer(serializers.ModelSerializer):
     list_of_expense=serializers.ListField()
     class Meta:
         model = ExtraExpense  # Set the model to be serialized
-        fields = ["notes_500","notes_200","notes_100","time","description","no_of_expense","list_of_expense"] # Include all fields from the model
+        fields = ["notes_500","notes_200","notes_100","time","no_of_expense","list_of_expense"] # Include all fields from the model
 
 class BankBalanceSerializer(serializers.ModelSerializer):
     class Meta:
