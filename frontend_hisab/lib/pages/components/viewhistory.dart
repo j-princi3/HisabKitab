@@ -6,7 +6,7 @@ import 'package:frontend_hisab/services/searchwithdate_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 var t = {};
-
+bool selectedADate = false;
 DateTime now = DateTime.now();
 int year = DateTime.now().year;
 int month = DateTime.now().month;
@@ -112,6 +112,7 @@ class _DatePickerExampleState extends State<DatePickerExample>
           content: Text(
               'Selected: ${_selectedDate.value.day}/${_selectedDate.value.month}/${_selectedDate.value.year}'),
         ));
+        selectedADate=true;
         saveDateTime(_selectedDate.value);
         t = responseData;
       });
@@ -136,7 +137,9 @@ class _DatePickerExampleState extends State<DatePickerExample>
               // Add more style properties as needed
             ),
             child: Text(
-              '${time.day}/${time.month}/${time.year}',
+              selectedADate
+                  ? '${time.day}/${time.month}/${time.year}'
+                  : 'Choose a date',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),

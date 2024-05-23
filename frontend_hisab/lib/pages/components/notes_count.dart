@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'indian_number_formatter.dart'; 
 class NotesCount extends StatefulWidget {
   const NotesCount({super.key});
 
@@ -87,7 +87,7 @@ class _NotesCountState extends State<NotesCount> {
           Column(
             children: [
               Text(
-                '$totalAmount',
+                formatIndianNumber(totalAmount),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               buildTextField(fivehundred, "~ 500 ~"),

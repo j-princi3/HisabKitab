@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'indian_number_formatter.dart'; 
 class NotesCountexpense extends StatefulWidget {
   const NotesCountexpense({super.key});
 
@@ -52,7 +52,7 @@ class _NotesCountexpenseState extends State<NotesCountexpense> {
           Column(
             children: [
               Text(
-                '$totalAmount',
+                formatIndianNumber(totalAmount),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 5),

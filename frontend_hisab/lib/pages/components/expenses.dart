@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend_hisab/services/hisab_api.dart' as salesservice;
 import 'package:frontend_hisab/services/extrasexpense_api.dart' as expenseservice;
+import 'indian_number_formatter.dart'; 
 var expenselist = [];
 
 class ExpenseItem {
@@ -57,8 +58,9 @@ class _ExpenseItemsState extends State<ExpenseItems> {
           ),
         ),
         Text(
-          '${_expenseItems.fold(0, (prev, item) => prev + (item.description.isEmpty ? 0 : item.amount))}',
-        ),
+                formatIndianNumber(_expenseItems.fold(0, (prev, item) => prev + (item.description.isEmpty ? 0 : item.amount))),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
         const SizedBox(height: 10),
         Column(
           children: List.generate(_expenseItems.length, (index) {
@@ -139,6 +141,7 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                 } else {
                   // Login failed
                   final msg = response['error'];
+                  expenselist.clear();
                   // Add your logic here, such as displaying an error message
                   showDialog(
                       // ignore: use_build_context_synchronously
