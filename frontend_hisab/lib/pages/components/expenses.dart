@@ -180,6 +180,7 @@ class _ExpenseItemsState extends State<ExpenseItems> {
                   prefs.setString('twohundredexpense', '');
                   prefs.setString('onehundredexpense', '');
                   prefs.setString('description', '');
+                  expenselist.clear();
                   _expenseItems.clear();
                   showDialog(
                         // ignore: use_build_context_synchronously
